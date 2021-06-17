@@ -1,4 +1,4 @@
-#include "MainMenu.h"
+#include "include/MainMenu.h"
 
 
 
@@ -13,21 +13,22 @@ MainMenu::~MainMenu(){
 MainMenu::Init(){
     InitSDL();
     CrearPantalla();
-    CargarDatos();
+    //CargarDatos();
 }
 
 void MainMenu::InitSDL() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        fprintf(stderr, "Error. No se puede iniciar el subsistema SDL video", SDL_GetError());
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        fprintf(stderr, "Error. No se puede iniciar el sdl", SDL_GetError());
         exit(1);
     }
 }
 
 void MainMenu::CrearPantalla(){
-    screen_ = SDL_SetVideoMode(800, 600, 32, SDL_SWURFACE);
-    if (screen_ == NULL){
-        fprintf(stderr, "Error al crear la pantalla", SDL_GetError());
-        exit(1);
+    SDL_Window* window = SDL_CreateWindow("MyGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 400, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    if (!window)
+    {
+        fprintf(stderr, "Error creating window.\n");
+        exit(2);
     }
 }
 
@@ -41,6 +42,6 @@ void MainMenu::CargarDatos(){
 }
 
 void MainMenu::FreeSDLSurface(){
-    SDL_FreeSUrface(imagen_);
+    SDL_FreeSurface(imagen_);
     //SDL_Quit();
 }

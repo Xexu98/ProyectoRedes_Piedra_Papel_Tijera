@@ -28,8 +28,9 @@ protected:
     bool isInside(const Vector2D &pos);
 
 public:
-    GameObject(SDL_Renderer *renderer = NULL, std::string filename = "", const Vector2D &pos = Vector2(),
-               const Vector2D &rotation = Vector2(), const Vector2D &area = Vector2(1, 1));
+    GameObject(SDL_Renderer *renderer = NULL, std::string filename = "", const Vector2D &pos = Vector2D(),
+               const Vector2D &rotation = Vector2D(), const Vector2D &area = Vector2D(1, 1));
+    GameObject(GameObject *g);         
     ~GameObject();
 
     virtual void to_bin();
@@ -40,7 +41,7 @@ public:
     virtual void handleInput(Input input){};
 
     bool overlaps(GameObject *other);
-
+    Texture *getTexture();
     Vector2D getPosition();
     Vector2D getRotation();
     Vector2D getSize();

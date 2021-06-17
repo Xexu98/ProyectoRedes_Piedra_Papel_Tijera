@@ -2,8 +2,9 @@
 #define GAME_H
 
 #include <SDL2/SDL.h>
-
+#include "Mapa.h"
 #include <vector>
+
 #include <map>
 
 #include "GameObject.h"
@@ -28,6 +29,9 @@ private:
 
     SDL_Renderer *renderer;
 
+
+    std::vector<Mapa*> tracks;
+
 public:
     Game();
     Game(SDL_Renderer *r);
@@ -44,7 +48,7 @@ public:
     bool collisionWithObstacle(GameObject *obj);
     bool raceEnded();
 
-    void removeTrack(Track *track);
+    void removeTrack(Mapa *track);
     void clearTracks();
 };
 

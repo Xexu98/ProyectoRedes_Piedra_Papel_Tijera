@@ -84,9 +84,9 @@ bool GameServer::processFound(Socket *socket, ClientMessage &msg)
            
             stateLock.lock();
             if (foundFirst)
-                state->handleInput({input, Input::NONE});
+                state->handleInput(input, Input::NONE);
             else
-                state->handleInput({Input::NONE, input});
+                state->handleInput(Input::NONE, input);
             stateLock.unlock();
         }
         return true;

@@ -1,17 +1,16 @@
 #include "Game.h"
-#include "Map.h"
+#include "Mapa.h"
 #include "Player.h"
 
 #include <algorithm>
 
-Game::Game() : Serializable(), tracks(std::vector<Map *>()),
-               winner(0), nPlayers(2), renderer(nullptr), startY(INITIAL_RESOLUTION_Y - 100)
-{
-    Map::setObstaclesPosition(INITIAL_RESOLUTION_X / nPlayers, startY - 50);
+Game::Game() : Serializable(), tracks(std::vector<Mapa *>()),
+               winner(0), nPlayers(2), renderer(nullptr), startY(INITIAL_RESOLUTION_Y - 100){
+    Mapa::setBulletsPosition(INITIAL_RESOLUTION_X / nPlayers, startY - 50);
     start();
 }
 
-Game::Game(SDL_Renderer *r) : Serializable(), tracks(std::vector<Map *>()),
+Game::Game(SDL_Renderer *r) : Serializable(), tracks(std::vector<Mapa *>()),
                               winner(0), nPlayers(2), renderer(r), startY(INITIAL_RESOLUTION_Y - 100) {}
 
 Game::~Game()
@@ -23,7 +22,7 @@ void Game::to_bin()
 {
     int dataSize = 0;
 
-    for (Map *track : tracks)
+    for (Mapa *track : tracks)
     {
         if (track != nullptr)
         {
@@ -40,7 +39,7 @@ void Game::to_bin()
     memcpy(aux, &nPlayers, sizeof(int));
     aux += sizeof(int);
 
-    for (Map *track : tracks)
+    for (Mapa *track : tracks)
     {
         if (track != nullptr)
         {
@@ -60,12 +59,12 @@ int Game::from_bin(char *data)
 
         if (tracks.size() < nPlayers)
             for (int i = tracks.size(); i < nPlayers; i++)
-                tracks.push_back(new Map(renderer));
+                tracks.push_back(new Mapa(renderer));
 
         //Reconstruir la clase usando el buffer data
         for (int i = 0; i < nPlayers; i++)
         {
-            Map *track = tracks[i];
+            Mapa *track = tracks[i];
             if (track != nullptr)
             {
                 track->from_bin(aux);
@@ -85,19 +84,19 @@ int Game::from_bin(char *data)
 void Game::start()
 {
     for (int i = 0; i < nPlayers; i++)
-        tracks.push_back(new Map(renderer, {i * (double)INITIAL_RESOLUTION_X / (double)nPlayers, startY}, INITIAL_RESOLUTION_X / nPlayers));
+        tracks.push_back(new Mapa(renderer, {i * (double)INITIAL_RESOLUTION_X / (double)nPlayers, startY}, INITIAL_RESOLUTION_X / nPlayers));
 }
 
 void Game::update(double deltaTime)
 {
-    for (Map *track : tracks)
+    for (Mapa *track : tracks)
         if (track != nullptr)
             track->update(deltaTime);
 }
 
 void Game::render()
 {
-    for (Map *track : tracks)
+    for (Mapa *track : tracks)
         if (track != nullptr)
             track->render();
 }
@@ -120,7 +119,7 @@ bool Game::raceEnded()
     return winner != 0;
 }
 
-void Game::removeTrack(Map *track)
+void Game::removeTrack(Mapa *track)
 {
     auto it = std::find(tracks.begin(), tracks.end(), track);
     if (it != tracks.end())
@@ -134,8 +133,8 @@ void Game::removeTrack(Map *track)
 void Game::clearTracks()
 {
     //Vector auxiliar para poder borrar referencias
-    std::vector<Map *> aux = tracks;
-    for (Map *track : aux)
+    std::vector<Mapa *> aux = tracks;
+    for (Mapa *track : aux)
         removeTrack(track);
 
     aux.clear();

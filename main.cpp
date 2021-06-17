@@ -1,5 +1,6 @@
+#include <stdio.h>
 #include <iostream>
-#include "MainMenu.h"
+#include "include/MainMenu.h"
 
 int main()
 {

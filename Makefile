@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -g -I.
-DEPS = Socket.h ClientMessage.h GameClient.h GameServer.h GameObject.h Vector2D. Game.h Player.h Texture.h Map.h Bullet.h
-OBJ = Socket.o ClientMessage.o GameClient.o GameServer.o GameObject.o Vector2D.o Game.o Player.o Texture.o Map.o Bullet.o
+DEPS = Socket.h ClientMessage.h GameClient.h GameServer.h GameObject.h Vector2D. Game.h Player.h Texture.h Mapa.h 
+OBJ = Socket.o ClientMessage.o GameClient.o GameServer.o GameObject.o Vector2D.o Game.o Player.o Texture.o Mapa.o 
 LIBS = -lpthread -lSDL2 -lSDL2_image
 
 %.o: %.cc $(DEPS)

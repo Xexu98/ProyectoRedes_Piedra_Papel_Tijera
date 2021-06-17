@@ -2,7 +2,7 @@
 
 #include <vector>
 
-GameObject::GameObject(SDL_Renderer *renderer, std::string filename, const Vector2 &pos, const Vector2 &rot, const Vector2 &size)
+GameObject::GameObject(SDL_Renderer *renderer, std::string filename, const Vector2D &pos, const Vector2D &rot, const Vector2D &size)
     : Serializable(), position(pos), rotation(rot), area(size), texture(new Texture(renderer, filename)) {}
 
 GameObject::GameObject(GameObject *g) : position(g->position), rotation(g->rotation), area(g->area), texture(g->texture)
@@ -67,32 +67,32 @@ void GameObject::render()
     texture->render(destRect);
 }
 
-Vector2 GameObject::getPosition()
+Vector2D GameObject::getPosition()
 {
     return position;
 }
 
-Vector2 GameObject::getRotation()
+Vector2D GameObject::getRotation()
 {
     return rotation;
 }
 
-Vector2 GameObject::getSize()
+Vector2D GameObject::getSize()
 {
     return area;
 }
 
-void GameObject::setPosition(const Vector2 &pos)
+void GameObject::setPosition(const Vector2D &pos)
 {
     position = pos;
 }
 
-void GameObject::setRotation(const Vector2 &rot)
+void GameObject::setRotation(const Vector2D &rot)
 {
     rotation = rot;
 }
 
-void GameObject::setSize(const Vector2 &s)
+void GameObject::setSize(const Vector2D &s)
 {
     area = s;
 }
@@ -102,7 +102,7 @@ Texture *GameObject::getTexture()
     return texture;
 }
 
-bool GameObject::isInside(const Vector2 &pos)
+bool GameObject::isInside(const Vector2D &pos)
 {
     return pos.x > position.x && pos.x < position.x + area.x * texture->getW() &&
            pos.y > position.y && pos.y < position.y + area.y * texture->getH();
@@ -119,7 +119,7 @@ bool GameObject::overlaps(GameObject *other)
 
     while (!inside && i < 4)
     {
-        Vector2 aux = {other->getPosition().x + x[i] * other->getSize().x * other->getTexture()->getW(), 
+        Vector2D aux = {other->getPosition().x + x[i] * other->getSize().x * other->getTexture()->getW(), 
         other->getPosition().y + y[i] * other->getSize().y * other->getTexture()->getH()};
         inside = isInside(aux);
         i++;

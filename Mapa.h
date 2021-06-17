@@ -1,26 +1,26 @@
-#ifndef TRACK_H
-#define TRACK_H
+#ifndef MAP_H
+#define MAP_H
 
 #include "GameObject.h"
 
 #include <vector>
 
 class Player;
-class Bullet;
+
 
 const int MIN_O_DIST = 50;
 const int MAX_O_DIST = 100;
 
-class Map : public Serializable
+class Mapa : public Serializable
 {
 private:
     static std::vector<Vector2D> obstaclesBasePos;
     static double endY;
 
-    std::vector<Bullet *> bullets;
+   
 
     Player *player;
-	Bullet *bullet;
+
     GameObject *background;
 
     std::string bulletFilename;
@@ -34,8 +34,8 @@ private:
     SDL_Renderer *renderer;
 
 public:
-    Map(SDL_Renderer *renderer, const Vector2D &startPos = Vector2D(), int width = 0);
-    ~Map();
+    Mapa(SDL_Renderer *renderer, const Vector2D &startPos = Vector2D(), int width = 0);
+    ~Mapa();
 
     virtual void to_bin();
     virtual int from_bin(char *data);
@@ -51,7 +51,7 @@ public:
 
     bool raceEnded();
 
-    void removeBullet(Bullet *obstacle);
+    void removeBullet();
     void clearBullets();
 };
 

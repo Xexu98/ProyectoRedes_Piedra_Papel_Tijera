@@ -73,20 +73,20 @@ bool Vector2D::operator==(const Vector2D &other)
 
 Vector2D operator+(const Vector2D &a, const Vector2D &b)
 {
-    return Vector2(a.x + b.x, a.y + b.y);
+    return Vector2D(a.x + b.x, a.y + b.y);
 }
 
 Vector2D operator-(const Vector2D &a, const Vector2D &b)
 {
-    return Vector2(a.x - b.x, a.y - b.y);
+    return Vector2D(a.x - b.x, a.y - b.y);
 }
 
 Vector2D operator*(const Vector2D &a, double n)
 {
-    return Vector2(a.x * n, a.y * n);
+    return Vector2D(a.x * n, a.y * n);
 }
 
 Vector2D operator/(const Vector2D &a, double n)
 {
-    return Vector2(a.x / n, a.y / n);
+    return Vector2D(a.x / n, a.y / n);
 }
