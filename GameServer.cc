@@ -37,7 +37,7 @@ void GameServer::simulationThread()
     timePoint current = timer::now();
     double deltaTime = 0.0;
     int i = 0;
-    while (state != nullptr && !state->raceEnded() && clients.first != nullptr && clients.second != nullptr)
+    while (state != nullptr &&  clients.first != nullptr && clients.second != nullptr)
     {
         last = current;
         current = timer::now();

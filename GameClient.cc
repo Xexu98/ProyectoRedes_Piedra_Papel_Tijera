@@ -14,7 +14,7 @@ GameClient::GameClient(const char *s, const char *p, const char *n) : socket(s, 
     SDL_DisplayMode monitor;
     SDL_GetCurrentDisplayMode(0, &monitor);
 
-    window = SDL_CreateWindow("Drifting in the 20s", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, INITIAL_RESOLUTION_X, INITIAL_RESOLUTION_Y,
+    window = SDL_CreateWindow("PiedraPapelOTijeras", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, INITIAL_RESOLUTION_X, INITIAL_RESOLUTION_Y,
                               SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);

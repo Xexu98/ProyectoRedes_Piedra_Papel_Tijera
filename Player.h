@@ -6,16 +6,6 @@
 class Player : public GameObject
 {
 private:
-	int lane;
-	bool hit;
-
-	double velocity;
-	double timer;
-	double life = 100;
-	double laneWidth;
-	bool slowed;
-	float slowTime;
-	void move(Vector2D dir);
 
 public:
 	Player(SDL_Renderer *renderer = NULL, std::string filename = "", const Vector2D &pos = Vector2D(),
@@ -24,10 +14,6 @@ public:
 	virtual void update(double deltaTime);
 	virtual void handleInput(Input input);
 
-	void lessLife();
-
-	void setVelocity(double v);
-	double getVelocity() const;
 };
 
 #endif

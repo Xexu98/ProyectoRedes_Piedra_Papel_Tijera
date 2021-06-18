@@ -17,14 +17,21 @@ private:
     static std::vector<Vector2D> obstaclesBasePos;
     static double endY;
 
-   
-
-    Player *player;
 
     GameObject *background;
+    GameObject *playB;
+    GameObject *quitB;
+    GameObject *siccorB;
+    GameObject *rockB;
+    GameObject *paperB;
 
-    std::string bulletFilename;
-    std::string playerFilename;
+
+
+    std::string playFilename;
+    std::string quitFilename;
+    std::string siccorFilename;
+    std::string rockFilename;
+    std::string paperFilename;
     std::string backgroundFilename;
   
 
@@ -44,15 +51,6 @@ public:
     void render();
     void handleInput(Input input);
 
-    void createBullets();
-    void checkCollisions();
-
-    static void setBulletsPosition(int width, int posY);
-
-    bool raceEnded();
-
-    void removeBullet();
-    void clearBullets();
 };
 
 #endif
