@@ -9,8 +9,7 @@
 
 #include "GameObject.h"
 
-class Track;
-class Player;
+class Mapa;
 
 const int N_LANES = 5;
 const int INITIAL_RESOLUTION_X = 1024;
@@ -45,11 +44,6 @@ public:
     void render();
     void handleInput(int i, Input input);
 
-    bool collisionWithObstacle(GameObject *obj);
-    bool raceEnded();
-
-    void removeTrack(Mapa *track);
-    void clearTracks();
 };
 
 #endif

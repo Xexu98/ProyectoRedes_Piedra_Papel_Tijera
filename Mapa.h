@@ -13,25 +13,7 @@ const int MAX_O_DIST = 100;
 
 class Mapa : public Serializable
 {
-private:
-    static std::vector<Vector2D> obstaclesBasePos;
-    static double endY;
 
-   
-
-    Player *player;
-
-    GameObject *background;
-
-    std::string bulletFilename;
-    std::string playerFilename;
-    std::string backgroundFilename;
-  
-
-    int offset;
-    Vector2D startPos;
-
-    SDL_Renderer *renderer;
 
 public:
     Mapa(SDL_Renderer *renderer, const Vector2D &startPos = Vector2D(), int width = 0);
@@ -44,15 +26,43 @@ public:
     void render();
     void handleInput(Input input);
 
-    void createBullets();
-    void checkCollisions();
+  
 
-    static void setBulletsPosition(int width, int posY);
+private:
 
-    bool raceEnded();
+    void renderMenuInicial();
+    void renderMenuJuego();
 
-    void removeBullet();
-    void clearBullets();
+    static std::vector<Vector2D> obstaclesBasePos;
+    static double endY;
+
+
+    GameObject *background;
+    //botones del interfaz
+    GameObject *playB;
+    GameObject *quitB;
+    //botones de juego
+    GameObject *siccorB;
+    GameObject *rockB;
+    GameObject *paperB;
+
+
+
+    std::string playFilename;
+    std::string quitFilename;
+    std::string siccorFilename;
+    std::string rockFilename;
+    std::string paperFilename;
+    std::string backgroundFilename;
+  
+
+    int offset;
+    Vector2D startPos;
+
+    SDL_Renderer *renderer;
+
+    bool _menuInicial;
+
 };
 
 #endif

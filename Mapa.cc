@@ -1,6 +1,6 @@
 #include "Mapa.h"
 #include "Game.h"   
-#include "Player.h"
+#include "Button.h"
 
 
 #include <algorithm>
@@ -8,22 +8,36 @@
 
 double Mapa::endY = 200;
 
-Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : bulletFilename("./Assets/whiterect.png"), playerFilename("./Assets/player.png"),
-                                                                           backgroundFilename("./Assets/cs2d.jpg"), startPos(startPos), renderer(renderer)
-{
+Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFilename("./Assets/play_button.png"), quitFilename("./Assets/quit_button.png"),
+                                                                           backgroundFilename("./Assets/mainMenu.png"),
+                                                                           siccorFilename("./Assets/tijeras.png"),rockFilename("./Assets/piedra.png")
+                                                                           ,paperFilename("./Assets/papel.png"),startPos(startPos), renderer(renderer)
+{ 
     offset = width / (N_LANES * 4);
 
     background = new GameObject(renderer, backgroundFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
+    playB = new GameObject(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2}, {}, {1, 1});
+    quitB = new GameObject(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {}, {1, 1});
+   // siccorB = new GameObject(renderer, siccorFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
+   // rockB = new GameObject(renderer, rockFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
+   // paperB = new GameObject(renderer, paperFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
 	
-    player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
+    //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
+    
+    //por defecto se incializa la app en el menu inicial de juego
+    _menuInicial = true;
 
-	clearBullets();
+	
 }
 
 Mapa::~Mapa()
 {
-	clearBullets();
-    delete player;
+
+    delete playB;
+    delete quitB;
+    delete siccorB;
+    delete rockB;
+    delete paperB;
     delete background;
 
 }
@@ -34,11 +48,32 @@ void Mapa::to_bin()
     int dataSize = startPos.size();
    
 
-    if (player != nullptr)
+    if (playB != nullptr)
     {
-        player->to_bin();
-        dataSize += player->size();
+        playB->to_bin();
+        dataSize += playB->size();
     }
+
+    if (quitB != nullptr)
+    {
+        quitB->to_bin();
+        dataSize += quitB->size();
+    }
+
+   /* if (siccorB != nullptr)
+    {
+        siccorB->to_bin();
+        dataSize += siccorB->size();
+    }  bool menuInicial() {
+        return true;
+    }
+
+
+    if (paperB != nullptr)
+    {
+        paperB->to_bin();
+        dataSize += paperB->size();
+    }*/
 
     if (background != nullptr)
     {
@@ -56,21 +91,38 @@ void Mapa::to_bin()
   
     aux += sizeof(int);
 
-    if (player != nullptr)
+    if (playB != nullptr)
     {
-        memcpy(aux, player->data(), player->size());
-        aux += player->size();
+        memcpy(aux, playB->data(), playB->size());
+        aux += playB->size();
     }
+     if (quitB != nullptr)
+    {
+        memcpy(aux, quitB->data(), quitB->size());
+        aux += quitB->size();
+    }
+  /*   if (siccorB != nullptr)
+    {
+        memcpy(aux, siccorB->data(), siccorB->size());
+        aux += siccorB->size();
+    }
+     if (rockB != nullptr)
+    {
+        memcpy(aux, rockB->data(), rockB->size());
+        aux += rockB->size();
+    }
+     if (paperB != nullptr)
+    {
+        memcpy(aux, paperB->data(), paperB->size());
+        aux += paperB->size();
+    }*/
 
     if (background != nullptr)
     {
         memcpy(aux, background->data(), background->size());
         aux += background->size();
     }
-
-  
 }
-
 int Mapa::from_bin(char *data)
 {
     try
@@ -80,12 +132,19 @@ int Mapa::from_bin(char *data)
 
         int dataSize = startPos.size();
 
-        if (player == nullptr)
-            player = new Player(renderer, playerFilename);
+        if (playB == nullptr)
+            playB = new GameObject(renderer, playFilename);
 
-        player->from_bin(aux);
-        aux += player->size();
-        dataSize += player->size();
+        playB->from_bin(aux);
+        aux += playB->size();
+        dataSize += playB->size();
+
+         if (quitB == nullptr)
+            quitB = new GameObject(renderer, quitFilename);
+
+        quitB->from_bin(aux);
+        aux += quitB->size();
+        dataSize += quitB->size();
 
         if (background == nullptr)
             background = new GameObject(renderer, backgroundFilename);
@@ -109,66 +168,41 @@ int Mapa::from_bin(char *data)
 
 void Mapa::update(double deltaTime)
 {
-    if (player != nullptr)
-    {
-        player->update(deltaTime);
-
-        Vector2D vel = {0, player->getVelocity()};
-
+    
         if (background != nullptr)
         {
-            background->setPosition(background->getPosition() + vel * deltaTime);
-            if (background->getPosition().y + 10 >= 0)
-                background->setPosition({background->getPosition().x, -INITIAL_RESOLUTION_Y});
+           background->setPosition({background->getPosition().x, -INITIAL_RESOLUTION_Y});
         }
-
-
-    }
-    checkCollisions();
 }
 
 void Mapa::render()
 {
     if (background != nullptr)
-        background->render();
+        background->render(); 
 
 
-    if (player != nullptr)
-        player->render();
+    if (_menuInicial){
+        renderMenuInicial();
+    }
+    else{
+        renderMenuJuego();
+    }
 }
 
 void Mapa::handleInput(Input input)
 {
-    if (player != nullptr)
-        player->handleInput(input);
+    
 }
 
-void Mapa::checkCollisions()
-{
-    int i = 0;
+void Mapa::renderMenuInicial(){
+    if (playB != nullptr)
+        playB->render();
+
+    if (quitB != nullptr)
+        quitB->render();
 }
 
-void Mapa::createBullets()
-{
+void Mapa::renderMenuJuego(){
 
 }
 
-bool Mapa::raceEnded()
-{
-    return true;
-}
-
-void Mapa::setBulletsPosition(int width, int posY)
-{
-   
-}
-
-void Mapa::removeBullet()
-{
-  
-}
-
-void Mapa::clearBullets()
-{
-
-}

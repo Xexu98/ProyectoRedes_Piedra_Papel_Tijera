@@ -1,5 +1,4 @@
 #include <unistd.h>
-
 #include "GameClient.h"
 
 extern "C" void *_client_thread(void *arg)

@@ -1,12 +1,10 @@
 #include "Game.h"
 #include "Mapa.h"
-#include "Player.h"
 
 #include <algorithm>
 
 Game::Game() : Serializable(), tracks(std::vector<Mapa *>()),
                winner(0), nPlayers(2), renderer(nullptr), startY(INITIAL_RESOLUTION_Y - 100){
-    Mapa::setBulletsPosition(INITIAL_RESOLUTION_X / nPlayers, startY - 50);
     start();
 }
 
@@ -15,7 +13,6 @@ Game::Game(SDL_Renderer *r) : Serializable(), tracks(std::vector<Mapa *>()),
 
 Game::~Game()
 {
-    clearTracks();
 }
 
 void Game::to_bin()
@@ -107,36 +104,4 @@ void Game::handleInput(int i, Input input)
         tracks[i]->handleInput(input);
 }
 
-bool Game::raceEnded()
-{
-    int i = 0;
-    while (i < tracks.size() && winner == 0)
-    {
-        winner = (tracks[i] != nullptr && tracks[i]->raceEnded()) ? i+1 : 0;
-        i++;
-    }
 
-    return winner != 0;
-}
-
-void Game::removeTrack(Mapa *track)
-{
-    auto it = std::find(tracks.begin(), tracks.end(), track);
-    if (it != tracks.end())
-    {
-        tracks.erase(it);
-        if (track != nullptr)
-            delete track;
-    }
-}
-
-void Game::clearTracks()
-{
-    //Vector auxiliar para poder borrar referencias
-    std::vector<Mapa *> aux = tracks;
-    for (Mapa *track : aux)
-        removeTrack(track);
-
-    aux.clear();
-    tracks.clear();
-}
