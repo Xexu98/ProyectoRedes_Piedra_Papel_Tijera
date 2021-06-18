@@ -1,6 +1,6 @@
 #include "Mapa.h"
 #include "Game.h"   
-#include "Player.h"
+#include "Button.h"
 
 
 #include <algorithm>
@@ -22,7 +22,7 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
    // rockB = new GameObject(renderer, rockFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
    // paperB = new GameObject(renderer, paperFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
 	
-    player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
+    //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
 
 	
 }

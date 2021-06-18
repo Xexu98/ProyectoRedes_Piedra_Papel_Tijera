@@ -1,12 +1,10 @@
 #include "Game.h"
 #include "Mapa.h"
-#include "Player.h"
 
 #include <algorithm>
 
 Game::Game() : Serializable(), tracks(std::vector<Mapa *>()),
                winner(0), nPlayers(2), renderer(nullptr), startY(INITIAL_RESOLUTION_Y - 100){
-    Mapa::setBulletsPosition(INITIAL_RESOLUTION_X / nPlayers, startY - 50);
     start();
 }
 
@@ -15,7 +13,6 @@ Game::Game(SDL_Renderer *r) : Serializable(), tracks(std::vector<Mapa *>()),
 
 Game::~Game()
 {
-    clearTracks();
 }
 
 void Game::to_bin()

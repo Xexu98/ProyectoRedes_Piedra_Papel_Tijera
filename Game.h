@@ -10,7 +10,6 @@
 #include "GameObject.h"
 
 class Mapa;
-class Player;
 
 const int N_LANES = 5;
 const int INITIAL_RESOLUTION_X = 1024;

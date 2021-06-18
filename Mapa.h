@@ -19,8 +19,10 @@ private:
 
 
     GameObject *background;
+    //botones del interfaz
     GameObject *playB;
     GameObject *quitB;
+    //botones de juego
     GameObject *siccorB;
     GameObject *rockB;
     GameObject *paperB;

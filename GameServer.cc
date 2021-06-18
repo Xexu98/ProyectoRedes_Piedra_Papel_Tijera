@@ -79,7 +79,7 @@ bool GameServer::processFound(Socket *socket, ClientMessage &msg)
         }
         else if (msg.type == ClientMessage::INPUT && state != nullptr)
         {
-            Input input = (msg.message == "LEFT") ? Input::LEFT : (msg.message == "RIGHT") ? Input::RIGHT : Input::NONE;
+            Input input = (msg.message == "LEFTCLICK") ? Input::LEFTCLICK : Input::NONE;
 
            
             stateLock.lock();
