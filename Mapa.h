@@ -13,7 +13,26 @@ const int MAX_O_DIST = 100;
 
 class Mapa : public Serializable
 {
+
+
+public:
+    Mapa(SDL_Renderer *renderer, const Vector2D &startPos = Vector2D(), int width = 0);
+    ~Mapa();
+
+    virtual void to_bin();
+    virtual int from_bin(char *data);
+
+    void update(double deltaTime);
+    void render();
+    void handleInput(Input input);
+
+  
+
 private:
+
+    void renderMenuInicial();
+    void renderMenuJuego();
+
     static std::vector<Vector2D> obstaclesBasePos;
     static double endY;
 
@@ -42,16 +61,7 @@ private:
 
     SDL_Renderer *renderer;
 
-public:
-    Mapa(SDL_Renderer *renderer, const Vector2D &startPos = Vector2D(), int width = 0);
-    ~Mapa();
-
-    virtual void to_bin();
-    virtual int from_bin(char *data);
-
-    void update(double deltaTime);
-    void render();
-    void handleInput(Input input);
+    bool _menuInicial;
 
 };
 

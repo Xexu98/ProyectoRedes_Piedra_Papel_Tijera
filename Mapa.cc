@@ -23,6 +23,9 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
    // paperB = new GameObject(renderer, paperFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
 	
     //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
+    
+    //por defecto se incializa la app en el menu inicial de juego
+    _menuInicial = true;
 
 	
 }
@@ -61,13 +64,10 @@ void Mapa::to_bin()
     {
         siccorB->to_bin();
         dataSize += siccorB->size();
+    }  bool menuInicial() {
+        return true;
     }
 
-    if (rockB != nullptr)
-    {
-        rockB->to_bin();
-        dataSize += rockB->size();
-    }
 
     if (paperB != nullptr)
     {
@@ -122,10 +122,7 @@ void Mapa::to_bin()
         memcpy(aux, background->data(), background->size());
         aux += background->size();
     }
-
-  
 }
-
 int Mapa::from_bin(char *data)
 {
     try
@@ -181,9 +178,23 @@ void Mapa::update(double deltaTime)
 void Mapa::render()
 {
     if (background != nullptr)
-        background->render();
+        background->render(); 
 
 
+    if (_menuInicial){
+        renderMenuInicial();
+    }
+    else{
+        renderMenuJuego();
+    }
+}
+
+void Mapa::handleInput(Input input)
+{
+    
+}
+
+void Mapa::renderMenuInicial(){
     if (playB != nullptr)
         playB->render();
 
@@ -191,8 +202,7 @@ void Mapa::render()
         quitB->render();
 }
 
-void Mapa::handleInput(Input input)
-{
-    
+void Mapa::renderMenuJuego(){
+
 }
 
