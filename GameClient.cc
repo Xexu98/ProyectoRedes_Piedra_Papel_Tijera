@@ -92,18 +92,9 @@ void GameClient::handleEvents()
             std::string msg;
             ClientMessage em;
 
-            if (event.key.keysym.sym == SDLK_LEFT)
+            if (event.button.button == SDL_BUTTON_LEFT)
             {
-                msg = "LEFT";
-
-                em = ClientMessage(nick, msg);
-                em.type = ClientMessage::INPUT;
-
-                socket.send(em, socket);
-            }
-            else if (event.key.keysym.sym == SDLK_RIGHT)
-            {
-                msg = "RIGHT";
+                msg = "LEFTCLICK";
 
                 em = ClientMessage(nick, msg);
                 em.type = ClientMessage::INPUT;
