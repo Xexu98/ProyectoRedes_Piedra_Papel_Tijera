@@ -20,11 +20,11 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
     msgB="QUIT";
     quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1, 1},msgB);
     msgB="SICCOR";
-    siccorB = new GameObject(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {1, 1},msgB);
+    siccorB = new Button(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {1, 1},msgB);
     msgB="ROCK";
-    rockB = new GameObject(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {1, 1},msgB);
+    rockB = new Button(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {1, 1},msgB);
     msgB="PAPER";
-    paperB = new GameObject(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {1, 1}, msgB);
+    paperB = new Button(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {1, 1}, msgB);
 	
     //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
     
@@ -68,9 +68,7 @@ void Mapa::to_bin()
     {
         siccorB->to_bin();
         dataSize += siccorB->size();
-    }  bool menuInicial() {
-        return true;
-    }
+    } 
 
 
     if (paperB != nullptr)
@@ -221,7 +219,6 @@ void Mapa::handleInput(Input input)
     if (quitB != nullptr)
     {
         quitB->handleInput(input);
-        quit=true;
     }
     if (siccorB != nullptr)
         siccorB->handleInput(input);
@@ -253,5 +250,4 @@ void Mapa::renderMenuJuego(){
 void Mapa::changeState()
 {
     _menuInicial=!_menuInicial;
-    SDL_RenderClear(renderer);
 }

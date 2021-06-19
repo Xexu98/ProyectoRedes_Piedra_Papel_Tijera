@@ -48,9 +48,10 @@ void GameClient::logout()
 
 void GameClient::input_thread()
 {
-    while (!quit)
+    while (!quit){
+        std::cout << "Entro input\n";
         handleEvents();
-
+    }
     logout();
 }
 
@@ -59,6 +60,7 @@ void GameClient::net_thread()
     int i = 0;
     while (!quit)
     {
+        std::cout << "Entro juego\n";
         socket.recv(*game);
         std::cout << "Render " << i++ << "\n";
         render();
@@ -68,7 +70,7 @@ void GameClient::net_thread()
 void GameClient::render()
 {
     SDL_RenderClear(renderer);
-
+    std::cout << "Entro render\n";
     if (game != nullptr)
         game->render();
 
