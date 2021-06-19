@@ -39,12 +39,12 @@ private:
 
     GameObject *background;
     //botones del interfaz
-    GameObject *playB;
-    GameObject *quitB;
+    Button *playB;
+    Button *quitB;
     //botones de juego
-    GameObject *siccorB;
-    GameObject *rockB;
-    GameObject *paperB;
+    Button *siccorB;
+    Button *rockB;
+    Button *paperB;
 
 
 

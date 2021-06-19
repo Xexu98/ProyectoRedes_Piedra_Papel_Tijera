@@ -14,11 +14,12 @@ void Button::handleInput(Input input)
 	switch (input)
 	{
 	 case LEFTCLICK:
-	//   int x = event.button.x;
-	//   int y = event.button.y;
-	//   if ((x > pos.x) && (x < pos.x + size.x) && (y > pos.y) && (y < pos.y + size.y)){
-	// 	  //meter el mensaje que hemos pasado
-	//   }
+	   int xMouse;
+	   int yMouse;
+	   SDL_GetGlobalMouseState(&xMouse,&yMouse);
+	   if ((xMouse > pos.x) && (xMouse < pos.x + size.x) && (yMouse > pos.y) && (yMouse < pos.y + size.y)){
+	 	  //meter el mensaje que hemos pasado
+	   }
 	 	break;
 	}
 }
