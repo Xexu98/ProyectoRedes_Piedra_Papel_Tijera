@@ -204,10 +204,18 @@ void Mapa::renderMenuInicial(){
 }
 
 void Mapa::renderMenuJuego(){
+    if (siccorB != nullptr)
+        siccorB->render();
 
+    if (rockB != nullptr)
+        rockB->render();
+
+    if (paperB != nullptr)
+        paperB->render();
 }
 
 void Mapa::changeState()
 {
     _menuInicial=!_menuInicial;
+    SDL_RenderClear(renderer);
 }

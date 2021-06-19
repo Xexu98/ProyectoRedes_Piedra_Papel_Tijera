@@ -26,14 +26,14 @@ public:
     void update(double deltaTime);
     void render();
     void handleInput(Input input);
-
+    void changeState();
   
 
 private:
 
     void renderMenuInicial();
     void renderMenuJuego();
-    void changeState();
+    
 
     static std::vector<Vector2D> obstaclesBasePos;
     static double endY;
@@ -50,7 +50,7 @@ private:
 
 
     std::string msgB;
-    
+
     std::string playFilename;
     std::string quitFilename;
     std::string siccorFilename;
