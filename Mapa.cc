@@ -213,7 +213,16 @@ void Mapa::render()
 
 void Mapa::handleInput(Input input)
 {
-    
+    if (playB != nullptr)
+        playB->handleInput(input);
+    if (quitB != nullptr)
+        quitB->handleInput(input);
+    if (siccorB != nullptr)
+        siccorB->handleInput(input);
+    if (rockB != nullptr)
+        rockB->handleInput(input);
+    if (paperB != nullptr)
+        paperB->handleInput(input);
 }
 
 void Mapa::renderMenuInicial(){
