@@ -14,14 +14,17 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
                                                                            ,paperFilename("./Assets/papel.png"),startPos(startPos), renderer(renderer)
 { 
     //offset = width / (N_LANES * 4);
-    background = new GameObject(renderer, backgroundFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
+    background = new GameObject(renderer, backgroundFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {5, 5});
     msgB="PLAY";
     playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{1, 1},msgB);
     msgB="QUIT";
     quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1, 1},msgB);
-   // siccorB = new GameObject(renderer, siccorFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
-   // rockB = new GameObject(renderer, rockFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
-   // paperB = new GameObject(renderer, paperFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
+    msgB="SICCOR";
+    siccorB = new GameObject(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {1, 1},msgB);
+    msgB="ROCK";
+    rockB = new GameObject(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {1, 1},msgB);
+    msgB="PAPER";
+    paperB = new GameObject(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {1, 1}, msgB);
 	
     //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
     
@@ -61,7 +64,7 @@ void Mapa::to_bin()
         dataSize += quitB->size();
     }
 
-   /* if (siccorB != nullptr)
+    if (siccorB != nullptr)
     {
         siccorB->to_bin();
         dataSize += siccorB->size();
@@ -74,7 +77,7 @@ void Mapa::to_bin()
     {
         paperB->to_bin();
         dataSize += paperB->size();
-    }*/
+    }
 
     if (background != nullptr)
     {
@@ -102,7 +105,7 @@ void Mapa::to_bin()
         memcpy(aux, quitB->data(), quitB->size());
         aux += quitB->size();
     }
-  /*   if (siccorB != nullptr)
+     if (siccorB != nullptr)
     {
         memcpy(aux, siccorB->data(), siccorB->size());
         aux += siccorB->size();
@@ -116,7 +119,7 @@ void Mapa::to_bin()
     {
         memcpy(aux, paperB->data(), paperB->size());
         aux += paperB->size();
-    }*/
+    }
 
     if (background != nullptr)
     {
@@ -147,6 +150,27 @@ int Mapa::from_bin(char *data)
         aux += quitB->size();
         dataSize += quitB->size();
 
+            if (quitB == nullptr)
+            quitB = new Button(renderer, quitFilename);
+
+        siccorB->from_bin(aux);
+        aux += siccorB->size();
+        dataSize += siccorB->size();
+
+            if (quitB == nullptr)
+            quitB = new Button(renderer, quitFilename);
+
+        rockB->from_bin(aux);
+        aux += rockB->size();
+        dataSize += rockB->size();
+
+            if (quitB == nullptr)
+            quitB = new Button(renderer, quitFilename);
+
+        paperB->from_bin(aux);
+        aux += paperB->size();
+        dataSize += paperB->size();
+
         if (background == nullptr)
             background = new GameObject(renderer, backgroundFilename);
 
@@ -170,10 +194,7 @@ int Mapa::from_bin(char *data)
 void Mapa::update(double deltaTime)
 {
     
-        if (background != nullptr)
-        {
-           background->setPosition({background->getPosition().x, -INITIAL_RESOLUTION_Y});
-        }
+      
 }
 
 void Mapa::render()
