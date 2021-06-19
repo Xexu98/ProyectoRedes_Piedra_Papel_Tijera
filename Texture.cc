@@ -77,7 +77,7 @@ void Texture::render(const SDL_Rect &destRect, double angle, SDL_Point anchor, S
     srcRect.y = 0;
     srcRect.w = w;
     srcRect.h = h;
-
+    SDL_RenderCopy(renderer, texture, &srcRect, &destRect);
     SDL_RenderCopyEx(renderer, texture, &srcRect, &destRect, angle, &anchor, flip);
 }
 

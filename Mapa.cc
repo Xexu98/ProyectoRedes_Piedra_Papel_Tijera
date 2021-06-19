@@ -9,26 +9,26 @@
 double Mapa::endY = 200;
 
 Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFilename("./Assets/play_button.png"), quitFilename("./Assets/quit_button.png"),
-                                                                           backgroundFilename("./Assets/mainMenu.png"),
+                                                                           backgroundFilename("./Assets/mainMenu.png"),backgroundGFilename("./Assets/Game_background.png"),
                                                                            siccorFilename("./Assets/tijeras.png"),rockFilename("./Assets/piedra.png")
                                                                            ,paperFilename("./Assets/papel.png"),startPos(startPos), renderer(renderer)
 { 
     //offset = width / (N_LANES * 4);
-    background = new GameObject(renderer, backgroundFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {5, 5});
+    //Game_background.png
+    background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
+    backgroundG = new GameObject(renderer, backgroundGFilename, {0, 0}, {1024, 720});
     msgB="PLAY";
-    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{1, 1},msgB);
+    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{10, 10},msgB);
     msgB="QUIT";
-    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1, 1},msgB);
+    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {10, 10},msgB);
     msgB="SICCOR";
-    siccorB = new Button(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {1, 1},msgB);
+    siccorB = new Button(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {10, 10},msgB);
     msgB="ROCK";
-    rockB = new Button(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {1, 1},msgB);
+    rockB = new Button(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {10, 10},msgB);
     msgB="PAPER";
-    paperB = new Button(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {1, 1}, msgB);
+    paperB = new Button(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {10, 10}, msgB);
 	
-    //player = new Player(renderer, playerFilename, startPos, {}, {0.5, 0.5}, width);
-    
-    //por defecto se incializa la app en el menu inicial de juego
+
     _menuInicial = true;
 
 	
@@ -82,7 +82,11 @@ void Mapa::to_bin()
         background->to_bin();
         dataSize += background->size();
     }
-
+     if (backgroundG != nullptr)
+    {
+        backgroundG->to_bin();
+        dataSize += backgroundG->size();
+    }
   
 
     alloc_data(dataSize + sizeof(int));
@@ -123,6 +127,12 @@ void Mapa::to_bin()
     {
         memcpy(aux, background->data(), background->size());
         aux += background->size();
+    }
+
+     if (backgroundG != nullptr)
+    {
+        memcpy(aux, backgroundG->data(), backgroundG->size());
+        aux += backgroundG->size();
     }
 }
 int Mapa::from_bin(char *data)
@@ -176,7 +186,12 @@ int Mapa::from_bin(char *data)
         aux += background->size();
         dataSize += background->size();
 
-      
+        if (backgroundG == nullptr)
+            backgroundG = new GameObject(renderer, backgroundGFilename);
+
+        background->from_bin(aux);
+        aux += background->size();
+        dataSize += background->size();
 
         _size = dataSize + sizeof(int);
 
@@ -197,14 +212,15 @@ void Mapa::update(double deltaTime)
 
 void Mapa::render()
 {
-    if (background != nullptr)
-        background->render(); 
+ 
 
 
     if (_menuInicial){
+        std::cout<<"renderizo menu inicial\n";
         renderMenuInicial();
     }
     else{
+        std::cout<<"renderizo menu juego\n";
         renderMenuJuego();
     }
 }
@@ -229,6 +245,9 @@ void Mapa::handleInput(Input input)
 }
 
 void Mapa::renderMenuInicial(){
+   if (background != nullptr)
+        background->render(); 
+
     if (playB != nullptr)
         playB->render();
 
@@ -237,6 +256,9 @@ void Mapa::renderMenuInicial(){
 }
 
 void Mapa::renderMenuJuego(){
+   if (backgroundG != nullptr)
+        backgroundG->render(); 
+
     if (siccorB != nullptr)
         siccorB->render();
 

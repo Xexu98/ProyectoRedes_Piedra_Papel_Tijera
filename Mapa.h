@@ -41,6 +41,7 @@ private:
 
 
     GameObject *background;
+    GameObject *backgroundG;
     //botones del interfaz
     Button *playB;
     Button *quitB;
@@ -58,6 +59,7 @@ private:
     std::string rockFilename;
     std::string paperFilename;
     std::string backgroundFilename;
+    std::string backgroundGFilename;
   
 
     int offset;
