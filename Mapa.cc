@@ -214,9 +214,15 @@ void Mapa::render()
 void Mapa::handleInput(Input input)
 {
     if (playB != nullptr)
+    {
         playB->handleInput(input);
+        changeState();
+    }
     if (quitB != nullptr)
+    {
         quitB->handleInput(input);
+        quit=true;
+    }
     if (siccorB != nullptr)
         siccorB->handleInput(input);
     if (rockB != nullptr)

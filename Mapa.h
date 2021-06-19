@@ -27,6 +27,7 @@ public:
     void render();
     void handleInput(Input input);
     void changeState();
+    bool returnState(){return _menuInicial;}
   
 
 private:
