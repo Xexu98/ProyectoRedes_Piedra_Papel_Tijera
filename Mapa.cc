@@ -1,7 +1,7 @@
 #include "Mapa.h"
 #include "Game.h"   
-#include "Button.h"
-
+#include <string.h>
+#include <string>
 
 #include <algorithm>
 
@@ -13,11 +13,12 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
                                                                            siccorFilename("./Assets/tijeras.png"),rockFilename("./Assets/piedra.png")
                                                                            ,paperFilename("./Assets/papel.png"),startPos(startPos), renderer(renderer)
 { 
-    offset = width / (N_LANES * 4);
-
+    //offset = width / (N_LANES * 4);
     background = new GameObject(renderer, backgroundFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
-    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2}, {}, {1, 1},"PLAY");
-    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {}, {1, 1},"QUIT");
+    msgB="PLAY";
+    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{1, 1},msgB);
+    msgB="QUIT";
+    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1, 1},msgB);
    // siccorB = new GameObject(renderer, siccorFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
    // rockB = new GameObject(renderer, rockFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
    // paperB = new GameObject(renderer, paperFilename, {startPos.x, -INITIAL_RESOLUTION_Y}, {}, {5, 5});
@@ -206,3 +207,7 @@ void Mapa::renderMenuJuego(){
 
 }
 
+void Mapa::changeState()
+{
+    _menuInicial=!_menuInicial;
+}

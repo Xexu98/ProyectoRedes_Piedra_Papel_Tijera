@@ -5,6 +5,8 @@ Button::Button(SDL_Renderer *renderer, std::string filename, const Vector2D &pos
 	: GameObject(renderer, filename, pos, Vector2D(), size)
 {
 	_msg = msg;
+	position=pos;
+	tam=size;
 }
 
 
@@ -17,7 +19,7 @@ void Button::handleInput(Input input)
 	   int xMouse;
 	   int yMouse;
 	   SDL_GetGlobalMouseState(&xMouse,&yMouse);
-	   if ((xMouse > pos.x) && (xMouse < pos.x + size.x) && (yMouse > pos.y) && (yMouse < pos.y + size.y)){
+	   if ((xMouse > position.x) && (xMouse < position.x + tam.x) && (yMouse > position.y) && (yMouse < position.y + tam.y)){
 	 	  //meter el mensaje que hemos pasado
 	   }
 	 	break;

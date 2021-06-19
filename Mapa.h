@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include "GameObject.h"
+#include "Button.h"
 
 #include <vector>
 
@@ -32,6 +33,7 @@ private:
 
     void renderMenuInicial();
     void renderMenuJuego();
+    void changeState();
 
     static std::vector<Vector2D> obstaclesBasePos;
     static double endY;
@@ -47,7 +49,8 @@ private:
     Button *paperB;
 
 
-
+    std::string msgB;
+    
     std::string playFilename;
     std::string quitFilename;
     std::string siccorFilename;
