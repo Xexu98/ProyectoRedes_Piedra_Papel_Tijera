@@ -15,12 +15,12 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
 { 
     //offset = width / (N_LANES * 4);
     //Game_background.png
-    background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
+    background = new GameObject(renderer, backgroundFilename, {0, 0}, {INITIAL_RESOLUTION_X, INITIAL_RESOLUTION_Y});
     backgroundG = new GameObject(renderer, backgroundGFilename, {0, 0}, {1024, 720});
     msgB="PLAY";
-    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{10, 10},msgB);
+    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{1024, 720},msgB);
     msgB="QUIT";
-    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {10, 10},msgB);
+    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1024, 720},msgB);
     msgB="SICCOR";
     siccorB = new Button(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {10, 10},msgB);
     msgB="ROCK";
