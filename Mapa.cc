@@ -15,21 +15,21 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
 { 
     //offset = width / (N_LANES * 4);
     //Game_background.png
-    background = new GameObject(renderer, backgroundFilename, {0, 0}, {INITIAL_RESOLUTION_X, INITIAL_RESOLUTION_Y});
+    background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
     backgroundG = new GameObject(renderer, backgroundGFilename, {0, 0}, {1024, 720});
     msgB="PLAY";
-    playB = new Button(renderer, playFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 + 2},{1024, 720},msgB);
+    playB = new Button(renderer, playFilename, {(INITIAL_RESOLUTION_X/2)-100, (INITIAL_RESOLUTION_Y/2)},{1, 1},msgB);
     msgB="QUIT";
-    quitB = new Button(renderer, quitFilename, {INITIAL_RESOLUTION_X/2, INITIAL_RESOLUTION_Y/2 - 2}, {1024, 720},msgB);
+    quitB = new Button(renderer, quitFilename, {(INITIAL_RESOLUTION_X/2)-100, (INITIAL_RESOLUTION_Y/2)+150}, {1, 1},msgB);
     msgB="SICCOR";
-    siccorB = new Button(renderer, siccorFilename, {INITIAL_RESOLUTION_X/2 - 2 , INITIAL_RESOLUTION_Y/3}, {10, 10},msgB);
+    siccorB = new Button(renderer, siccorFilename, {(INITIAL_RESOLUTION_X/2)-400 , (0)}, {1, 1},msgB);
     msgB="ROCK";
-    rockB = new Button(renderer, rockFilename, {INITIAL_RESOLUTION_X/2 , INITIAL_RESOLUTION_Y/3},  {10, 10},msgB);
+    rockB = new Button(renderer, rockFilename, {(INITIAL_RESOLUTION_X/2) , (0)},  {1, 1},msgB);
     msgB="PAPER";
-    paperB = new Button(renderer, paperFilename, {INITIAL_RESOLUTION_X/2 +2, INITIAL_RESOLUTION_Y/3}, {10, 10}, msgB);
+    paperB = new Button(renderer, paperFilename, {((INITIAL_RESOLUTION_X/2)), (400)}, {1, 1}, msgB);
 	
 
-    _menuInicial = true;
+    _menuInicial = false;
 
 	
 }
@@ -123,16 +123,15 @@ void Mapa::to_bin()
         aux += paperB->size();
     }
 
-    if (background != nullptr)
-    {
-        memcpy(aux, background->data(), background->size());
-        aux += background->size();
-    }
-
      if (backgroundG != nullptr)
     {
         memcpy(aux, backgroundG->data(), backgroundG->size());
         aux += backgroundG->size();
+    }
+      if (background != nullptr)
+    {
+        memcpy(aux, background->data(), background->size());
+        aux += background->size();
     }
 }
 int Mapa::from_bin(char *data)
@@ -158,36 +157,36 @@ int Mapa::from_bin(char *data)
         aux += quitB->size();
         dataSize += quitB->size();
 
-            if (quitB == nullptr)
-            quitB = new Button(renderer, quitFilename);
+        if (siccorB == nullptr)
+            siccorB = new Button(renderer, siccorFilename, {(INITIAL_RESOLUTION_X/2)-400 , (0)}, {1, 1},msgB);
 
         siccorB->from_bin(aux);
         aux += siccorB->size();
         dataSize += siccorB->size();
 
-            if (quitB == nullptr)
-            quitB = new Button(renderer, quitFilename);
+        if (rockB == nullptr)
+            rockB = new Button(renderer, rockFilename);
 
         rockB->from_bin(aux);
         aux += rockB->size();
         dataSize += rockB->size();
 
-            if (quitB == nullptr)
-            quitB = new Button(renderer, quitFilename);
+        if (paperB == nullptr)
+            paperB = new Button(renderer, paperFilename);
 
         paperB->from_bin(aux);
         aux += paperB->size();
         dataSize += paperB->size();
 
-        if (background == nullptr)
-            background = new GameObject(renderer, backgroundFilename);
+        if (backgroundG == nullptr)
+            backgroundG = new GameObject(renderer, backgroundGFilename);
 
         background->from_bin(aux);
         aux += background->size();
         dataSize += background->size();
 
-        if (backgroundG == nullptr)
-            backgroundG = new GameObject(renderer, backgroundGFilename);
+        if (background == nullptr)
+            background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
 
         background->from_bin(aux);
         aux += background->size();
@@ -213,15 +212,35 @@ void Mapa::update(double deltaTime)
 void Mapa::render()
 {
  
-
+    int xMouse;
+	int yMouse;
+	SDL_GetMouseState(&xMouse,&yMouse);
+	std::cout<<xMouse<<" "<<yMouse<<"\n";
 
     if (_menuInicial){
         std::cout<<"renderizo menu inicial\n";
-        renderMenuInicial();
+         if (background != nullptr)
+            background->render(); 
+
+        if (playB != nullptr)
+            playB->render();
+
+        if (quitB != nullptr)
+            quitB->render();
     }
     else{
         std::cout<<"renderizo menu juego\n";
-        renderMenuJuego();
+        if (backgroundG != nullptr)
+            backgroundG->render(); 
+
+        if (siccorB != nullptr)
+            siccorB->render();
+
+        if (rockB != nullptr)
+            rockB->render();
+
+        if (paperB != nullptr)
+            paperB->render();
     }
 }
 
@@ -230,12 +249,13 @@ void Mapa::handleInput(Input input)
     if (playB != nullptr)
     {
         playB->handleInput(input);
-        changeState();
+        //changeState();
     }
     if (quitB != nullptr)
     {
         quitB->handleInput(input);
     }
+
     if (siccorB != nullptr)
         siccorB->handleInput(input);
     if (rockB != nullptr)
@@ -246,7 +266,7 @@ void Mapa::handleInput(Input input)
 
 void Mapa::renderMenuInicial(){
    if (background != nullptr)
-        background->render(); 
+       background->render(); 
 
     if (playB != nullptr)
         playB->render();

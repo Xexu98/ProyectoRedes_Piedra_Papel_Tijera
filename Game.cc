@@ -92,11 +92,13 @@ void Game::update(double deltaTime)
 }
 
 void Game::render()
-{
-    std::cout<<"Entro en el render\n";
+{   int i=0;
     for (Mapa *track : tracks)
+    {
         if (track != nullptr)
             track->render();
+    }
+    
 }
 
 void Game::handleInput(int i, Input input)

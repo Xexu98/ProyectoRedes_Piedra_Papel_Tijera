@@ -68,10 +68,13 @@ void GameClient::net_thread()
 void GameClient::render()
 {
     SDL_RenderClear(renderer);
-    std::cout << "Entro render\n";
     if (game != nullptr)
         game->render();
-
+    else
+    {
+         std::cout << "no Entro render\n";
+    }
+    
     SDL_RenderPresent(renderer);
 }
 

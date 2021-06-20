@@ -30,6 +30,7 @@ private:
 
 
     std::vector<Mapa*> tracks;
+    Mapa* mapo;
 
 public:
     Game();
