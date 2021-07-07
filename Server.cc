@@ -1,23 +1,16 @@
-#include <string>
-#include <unistd.h>
-#include <string.h>
-#include <signal.h>
-
 #include "GameServer.h"
+#include <thread>
 
 int main(int argc, char **argv)
 {
-    sigset_t waitset;
-    int sig;
+    GameServer es(argv[1], argv[2]);
 
-    GameServer gameServer(argv[1], argv[2]);
-
-    gameServer.serverThread();
-
-    sigemptyset(&waitset);
-    sigaddset(&waitset, SIGQUIT);
-
-    sigwait(&waitset, &sig);
-
+    std::thread net_thread([&es]() { es.do_messages(); });
+    
+    while (true)
+    {
+        es.checkCollisions();
+        es.createObjects();
+    }
     return 0;
 }

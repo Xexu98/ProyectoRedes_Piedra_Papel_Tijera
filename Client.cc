@@ -1,31 +1,20 @@
-#include <unistd.h>
-#include "GameClient.h"
-
-extern "C" void *_client_thread(void *arg)
-{
-    GameClient *server = static_cast<GameClient *>(arg);
-
-    if (server != nullptr)
-        server->net_thread();
-
-    return 0;
-}
+#include <thread>
+#include "Game.h"
 
 int main(int argc, char **argv)
 {
-    GameClient ec(argv[1], argv[2], argv[3]);
 
-    pthread_attr_t attr;
-    pthread_t id;
+    Game game(argv[1],argv[2], argv[3]);
 
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+    //Iniciamos el thread que se encargará de recibir mensajes del
+    //servidor
+    std::thread([&game]() { game.net_thread(); }).detach();
+    
+    //Mandamos mensaje de login y creamos la ventana de SDL
+    game.initGame();
 
-    pthread_create(&id, &attr, _client_thread, static_cast<void *>(&ec));
-
-    ec.login();
-
-    ec.input_thread();
+    //Para que se quede aquí hasta que queramos
+    game.run();
 
     return 0;
 }

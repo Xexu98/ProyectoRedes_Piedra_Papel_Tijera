@@ -1,112 +1,206 @@
-#include "GameClient.h"
-#include "ClientMessage.h"
+#include "Game.h"
+#include "Message.h"
+#include "Resources.h"
+#include "InputManager.h"
+#include "Constants.h"
 
-#include <string>
-#include <unistd.h>
-#include <string.h>
-
-#include <stdio.h>
-
-GameClient::GameClient(const char *s, const char *p, const char *n) : socket(s, p), nick(n), window(NULL), renderer(NULL), quit(false)
+void Game::initGame()
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS);
+    //Mandamos mensaje de login
+    Message logMsg = Message(MessageType::LOGIN, mainPlayer);
 
-    SDL_DisplayMode monitor;
-    SDL_GetCurrentDisplayMode(0, &monitor);
-
-    window = SDL_CreateWindow("PiedraPapelOTijeras", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, INITIAL_RESOLUTION_X, INITIAL_RESOLUTION_Y,
-                              SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    game = new Game(renderer);
-}
-
-void GameClient::login()
-{
-    std::string msg;
-
-    ClientMessage em(nick, msg);
-    em.type = ClientMessage::LOGIN;
-
-    socket.send(em, socket);
-}
-
-void GameClient::logout()
-{
-    std::string msg;
-
-    ClientMessage em(nick, msg);
-    em.type = ClientMessage::LOGOUT;
-
-    socket.send(em, socket);
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-}
-
-void GameClient::input_thread()
-{
-    while (!quit){
-        handleEvents();
-        render();
-    }
-    logout();
-}
-
-void GameClient::net_thread()
-{
-    int i = 0;
-    while (!quit)
+    if (socket.send(logMsg, socket) == -1)
     {
-        socket.recv(*game);
-        //std::cout << "Render " << i++ << "\n";
-        
+        std::cout << "Error al enviar el mensaje de login\n";
     }
 }
 
-void GameClient::render()
+Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
 {
-    SDL_RenderClear(renderer);
-    if (game != nullptr){
-       
-        game->render();
-    }
-    SDL_RenderPresent(renderer);
-}
+    app = SDLApp::GetInstance();
 
-void GameClient::handleEvents()
-{
-    SDL_Event event;
-    
-    while (SDL_PollEvent(&event) && !quit)
+    //Creacion de las texturas
+    for (auto &image : Resources::imageRoutes)
     {
-        if (event.type == SDL_QUIT){
-            quit = true;
-        }
-        else if (event.type == SDL_WINDOWEVENT)
+        app->getTextureManager()->loadFromImg(image.textureId, app->getRenderer(), image.filename);
+    }
+
+    mainPlayer = new Jugador(n);
+    mainPlayer->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Jugador1));
+
+    background = app->getTextureManager()->getTexture(Resources::TextureId::Escenario);
+}
+
+Game::~Game()
+{
+    //Destruir al jugador
+    delete mainPlayer;
+
+    //Destruir tb la ventana de SDL
+    delete app;
+}
+
+void Game::net_thread()
+{
+    while (isRunning)
+    {
+        //Recibir Mensajes de red
+        Message em;
+
+        socket.recv(em);
+
+        //Mostrar en pantalla el mensaje de la forma "nick: mensaje"
+        std::cout << "Recibido mensaje de: " << em.getNick() << " de tipo " << (int)em.getMessageType() << "\n";
+
+        switch (em.getMessageType())
         {
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED)
-                SDL_RenderSetScale(renderer, event.window.data1 / (float)INITIAL_RESOLUTION_X, event.window.data2 / (float)INITIAL_RESOLUTION_Y);
-        }
-        else if (event.type == SDL_KEYDOWN)
+        case MessageType::NEWPLAYER:
         {
-            std::cout<<"Entro al inputqwqw\n";
-            std::string msg;
-            ClientMessage em;
-            
-            if (event.button.button == SDL_BUTTON_LEFT)
+            ObjectInfo p = em.getObjectInfo();
+            if (em.getNick() != mainPlayer->getNick())
+                jugadores[em.getNick()] = p;
+            else
             {
-                msg = "LEFTCLICK";
-                std::cout<<"Entro al inputewe\n";
-
-                em = ClientMessage(nick, msg);
-                em.type = ClientMessage::INPUT;
-
-                socket.send(em, socket);
+                mainPlayer->setPosition(p.pos);
+                mainPlayer->setTam(p.tam);
             }
+
+            break;
         }
-        std::cout<<"Entro al input\n";
+        case MessageType::PLAYERINFO:
+        {
+            ObjectInfo p = em.getObjectInfo();
+            jugadores[em.getNick()] = p;
+            break;
+        }
+        case MessageType::PLAYERDEAD:
+        {
+            //HEMOS MUERTO NOSOTROS
+            if (em.getNick() == mainPlayer->getNick())
+            {
+                //Avisamos al servidor de que hemos muerto para que nos desconecte
+                em.setMsgType(MessageType::LOGOUT);
+                socket.send(em, socket);
+                std::cout << "HAS PERDIDO\n";
+                isRunning = false;
+
+            }
+            //HA MUERTO OTRO JUGADOR
+            else
+            {
+                std::cout << "Ha muerto un jugador: " << em.getNick() << "\n";
+                //Lo quitamos de nuestra lista de jugadores a pintar
+                jugadores.erase(em.getNick());
+            }
+            break;
+        }
+        case MessageType::PICKUPEAT:
+        {
+            ObjectInfo p = em.getObjectInfo();
+            mainPlayer->setTam(mainPlayer->getPlayerTam() + (p.tam/MIN_SIZE_PICKUP));
+            //mandamos un mensaje para actualizar la informacion
+            Message cm(MessageType::PLAYERINFO, mainPlayer);
+            socket.send(cm, socket);
+            break;
+        }
+
+        case MessageType::PICKUPDESTROY:
+        {
+
+            //Lo quitamos de nuestra lista de objetos a pintar
+            objetos.erase(em.getNick());
+
+            break;
+        }
+        case MessageType::NEWPICKUP:
+        {
+            ObjectInfo p = em.getObjectInfo();
+            objetos[em.getNick()] = p;
+            break;
+        }
+        }
+    }
+
+}
+
+void Game::input_thread()
+{
+
+    //Updateamos la instancia del input
+    HandleEvents::instance()->update();
+
+    Vector2D playerPos = mainPlayer->getPlayerPos();
+    bool sendMessage = false;
+    //Movemos al jugador localmente
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_W) && playerPos.getY() - PLAYER_SPEEED >= 0)
+    {
+        mainPlayer->setPosition(Vector2D(playerPos.getX(), playerPos.getY() - PLAYER_SPEEED));
+        sendMessage = true;
+    }
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_S) && playerPos.getY() + mainPlayer->getPlayerTam() + PLAYER_SPEEED<= WINDOW_HEIGHT)
+    {
+        mainPlayer->setPosition(Vector2D(playerPos.getX(), playerPos.getY() + PLAYER_SPEEED));
+        sendMessage = true;
+    }
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_A) && playerPos.getX() - PLAYER_SPEEED >= 0)
+    {
+        mainPlayer->setPosition(Vector2D(playerPos.getX() - PLAYER_SPEEED, playerPos.getY()));
+        sendMessage = true;
+    }
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_D) && playerPos.getX() + mainPlayer->getPlayerTam() + PLAYER_SPEEED <= WINDOW_WIDTH)
+    {
+        mainPlayer->setPosition(Vector2D(playerPos.getX() + PLAYER_SPEEED, playerPos.getY()));
+        sendMessage = true;
+    }
+
+    if (sendMessage && isRunning)
+    {
+        Message m(MessageType::PLAYERINFO, mainPlayer);
+        socket.send(m, socket);
+    }
+}
+
+void Game::render() const
+{
+
+    //Limpiamos el renderer
+    SDL_RenderClear(app->getRenderer());
+
+    //Pintamos el fonfo
+    background->render({0, 0, app->winWidth_, app->winHeight_}, SDL_FLIP_NONE);
+    
+    //Pintamos a los objetos
+    SDLTexture* o = app->getTextureManager()->getTexture(Resources::TextureId::Objeto);
+    for (auto it = objetos.begin(); it != objetos.end(); ++it)
+    {
+        ObjectInfo p = (*it).second;
+        o->render({(int)p.pos.getX(), (int)p.pos.getY(), p.tam, p.tam});
+    }
+
+    //Pintamos a nuestro jugador
+    mainPlayer->getPlayerTexture()->render({(int)mainPlayer->getPlayerPos().getX(),
+                                            (int)mainPlayer->getPlayerPos().getY(),
+                                            mainPlayer->getPlayerTam(),
+                                            mainPlayer->getPlayerTam()});
+
+    //Pintamos a los jugadores contrarios
+    SDLTexture *t = app->getTextureManager()->getTexture(Resources::TextureId::Jugador2);
+    for (auto it = jugadores.begin(); it != jugadores.end(); ++it)
+    {
+        ObjectInfo p = (*it).second;
+        t->render({(int)p.pos.getX(), (int)p.pos.getY(), p.tam, p.tam});
+    }
+
+
+    //Volcamos sobre la ventana
+    SDL_RenderPresent(app->getRenderer());
+}
+
+void Game::run()
+{
+    while (isRunning)
+    {
+        input_thread();
+        render();
     }
 }

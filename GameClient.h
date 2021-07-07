@@ -1,44 +1,35 @@
-#ifndef GAME_CLIENT_H
-#define GAME_CLIENT_H
-
+#include "Jugador.h"
+#include "SDLApp.h"
+#include "ObjectInfo.h"
+#include <map>
 #include "Socket.h"
-#include "Game.h"
 
-//Clase para el cliente del juego
-class GameClient
+class Game
 {
-public:
-    
-    GameClient(const char *s, const char *p, const char *n);
-
-    
-    void login();
-
-  
-    void logout();
-
-    
-    void input_thread();
-
-    
-    void net_thread();
-
-    void render();
-    void handleEvents();
-
 private:
-    
+    //Jugador controlado por este juego
+    Jugador *mainPlayer = nullptr;
+    //Lista con la informacion de los otros jugadores
+    std::map<std::string, ObjectInfo> jugadores;
+    //Lista de informacion de los objetos
+    std::map<std::string, ObjectInfo> objetos;
+    //Referencia a la App de SDL para gestionar el pintado, la ventana etc
+    SDLApp *app = nullptr;
+    //Textura de fondo
+    SDLTexture *background = nullptr;
+    //SOcket para comunicarnos con el servidor
     Socket socket;
 
-    
-    std::string nick;
+    //booleano para determinar si hemos perdido o no
+    bool isRunning = true;
 
-    SDL_Window *window;
-    SDL_Renderer *renderer;
+public:
+    Game(const char *s, const char *p, const char *n);
+    ~Game();
 
-    bool quit;
-
-    Game *game;
+    void render() const;
+    void initGame();
+    void net_thread();
+    void input_thread();
+    void run();
 };
-
-#endif
