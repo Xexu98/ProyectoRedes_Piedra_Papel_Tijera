@@ -31,4 +31,14 @@ Vector2D operator-(const Vector2D &a, const Vector2D &b);
 Vector2D operator*(const Vector2D &a, double n);
 Vector2D operator/(const Vector2D &a, double n);
 
+//hemos cambiado:
+
+//cliente.cc
+//Server.cc
+//gameCliente.cc
+//GameServer.cc
+//GameCliente.h
+//GameServer.h
+
+
 #endif
