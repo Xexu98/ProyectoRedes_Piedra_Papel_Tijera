@@ -102,7 +102,7 @@ void Game::render()
 }
 
 void Game::handleInput(int i, Input input)
-{
+{   
     if (i < tracks.size() && tracks[i] != nullptr)
         tracks[i]->handleInput(input);
 }

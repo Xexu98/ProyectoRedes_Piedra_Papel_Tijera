@@ -15,7 +15,7 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
 { 
     //offset = width / (N_LANES * 4);
     //Game_background.png
-    background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
+    background = new GameObject(renderer, backgroundFilename, {0, 0}, {1, 1});
     backgroundG = new GameObject(renderer, backgroundGFilename, {0, 0}, {1024, 720});
     msgB="PLAY";
     playB = new Button(renderer, playFilename, {(INITIAL_RESOLUTION_X/2)-100, (INITIAL_RESOLUTION_Y/2)},{1, 1},msgB);
@@ -29,7 +29,7 @@ Mapa::Mapa(SDL_Renderer *renderer, const Vector2D &startPos, int width) : playFi
     paperB = new Button(renderer, paperFilename, {((INITIAL_RESOLUTION_X/2)), (400)}, {1, 1}, msgB);
 	
 
-    _menuInicial = false;
+    _menuInicial = true;
 
 	
 }
@@ -186,7 +186,7 @@ int Mapa::from_bin(char *data)
         dataSize += background->size();
 
         if (background == nullptr)
-            background = new GameObject(renderer, backgroundFilename, {0, 0}, {1024, 720});
+            background = new GameObject(renderer, backgroundFilename, {0, 0}, {1, 1});
 
         background->from_bin(aux);
         aux += background->size();
@@ -248,6 +248,7 @@ void Mapa::handleInput(Input input)
 {
     if (playB != nullptr)
     {
+       
         playB->handleInput(input);
         //changeState();
     }
@@ -259,7 +260,7 @@ void Mapa::handleInput(Input input)
     if (siccorB != nullptr)
         siccorB->handleInput(input);
     if (rockB != nullptr)
-        rockB->handleInput(input);
+        rockB->handleInput(input);render();
     if (paperB != nullptr)
         paperB->handleInput(input);
 }

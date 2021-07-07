@@ -40,6 +40,7 @@ public:
     virtual void to_bin();
     virtual int from_bin(char *data);
 
+    bool vicotria(){return false;}
     void start();
     void update(double deltaTime);
     void render();

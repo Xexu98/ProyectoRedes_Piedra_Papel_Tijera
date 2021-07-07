@@ -20,9 +20,10 @@ void Button::handleInput(Input input)
 	   int xMouse;
 	   int yMouse;
 	   SDL_GetMouseState(&xMouse,&yMouse);
-	   if ((xMouse > position.x) && (xMouse < position.x + tam.x) && (yMouse > position.y) && (yMouse < position.y + tam.y)){
+	   
+	   if (isInside(Vector2D(xMouse,yMouse))){
 	 	  
-		   
+		   std::cout<<"click\n";
 	   }
 	 	break;
 	}

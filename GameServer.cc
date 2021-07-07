@@ -37,7 +37,7 @@ void GameServer::simulationThread()
     timePoint current = timer::now();
     double deltaTime = 0.0;
     int i = 0;
-    while (state != nullptr &&  clients.first != nullptr && clients.second != nullptr)
+    while (state != nullptr &&!state->vicotria() && clients.first != nullptr && clients.second != nullptr)
     {
         last = current;
         current = timer::now();
@@ -80,7 +80,7 @@ bool GameServer::processFound(Socket *socket, ClientMessage &msg)
         else if (msg.type == ClientMessage::INPUT && state != nullptr)
         {
             Input input = (msg.message == "LEFTCLICK") ? Input::LEFTCLICK : Input::NONE;
-
+            std::cout <<input <<"asasa\n";
            
             stateLock.lock();
             if (foundFirst)

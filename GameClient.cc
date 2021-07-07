@@ -49,8 +49,8 @@ void GameClient::logout()
 void GameClient::input_thread()
 {
     while (!quit){
-        render();
         handleEvents();
+        render();
     }
     logout();
 }
@@ -61,30 +61,30 @@ void GameClient::net_thread()
     while (!quit)
     {
         socket.recv(*game);
-        std::cout << "Render " << i++ << "\n";
+        //std::cout << "Render " << i++ << "\n";
+        
     }
 }
 
 void GameClient::render()
 {
     SDL_RenderClear(renderer);
-    if (game != nullptr)
+    if (game != nullptr){
+       
         game->render();
-    else
-    {
-         std::cout << "no Entro render\n";
     }
-    
     SDL_RenderPresent(renderer);
 }
 
 void GameClient::handleEvents()
 {
     SDL_Event event;
+    
     while (SDL_PollEvent(&event) && !quit)
     {
-        if (event.type == SDL_QUIT)
+        if (event.type == SDL_QUIT){
             quit = true;
+        }
         else if (event.type == SDL_WINDOWEVENT)
         {
             if (event.window.event == SDL_WINDOWEVENT_RESIZED)
@@ -92,12 +92,14 @@ void GameClient::handleEvents()
         }
         else if (event.type == SDL_KEYDOWN)
         {
+            std::cout<<"Entro al inputqwqw\n";
             std::string msg;
             ClientMessage em;
-
+            
             if (event.button.button == SDL_BUTTON_LEFT)
             {
                 msg = "LEFTCLICK";
+                std::cout<<"Entro al inputewe\n";
 
                 em = ClientMessage(nick, msg);
                 em.type = ClientMessage::INPUT;
@@ -105,5 +107,6 @@ void GameClient::handleEvents()
                 socket.send(em, socket);
             }
         }
+        std::cout<<"Entro al input\n";
     }
 }
