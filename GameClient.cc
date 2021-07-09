@@ -1,10 +1,10 @@
-#include "Game.h"
-#include "Message.h"
+#include "GameClient.h"
+#include "ClientMessage.h"
 #include "Resources.h"
 #include "InputManager.h"
 #include "Constants.h"
 
-void Game::initGame()
+void GameClient::initGameClient()
 {
     //Mandamos mensaje de login
     Message logMsg = Message(MessageType::LOGIN, mainPlayer);
@@ -15,7 +15,7 @@ void Game::initGame()
     }
 }
 
-Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
+GameClient::GameClient(const char *s, const char *p, const char *n) : socket(s, p)
 {
     app = SDLApp::GetInstance();
 
@@ -31,7 +31,7 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
     background = app->getTextureManager()->getTexture(Resources::TextureId::Escenario);
 }
 
-Game::~Game()
+GameClient::~GameClient()
 {
     //Destruir al jugador
     delete mainPlayer;
@@ -40,7 +40,7 @@ Game::~Game()
     delete app;
 }
 
-void Game::net_thread()
+void GameClient::net_thread()
 {
     while (isRunning)
     {
@@ -123,7 +123,7 @@ void Game::net_thread()
 
 }
 
-void Game::input_thread()
+void GameClient::input_thread()
 {
 
     //Updateamos la instancia del input
@@ -160,7 +160,7 @@ void Game::input_thread()
     }
 }
 
-void Game::render() const
+void GameClient::render() const
 {
 
     //Limpiamos el renderer
@@ -196,7 +196,7 @@ void Game::render() const
     SDL_RenderPresent(app->getRenderer());
 }
 
-void Game::run()
+void GameClient::run()
 {
     while (isRunning)
     {

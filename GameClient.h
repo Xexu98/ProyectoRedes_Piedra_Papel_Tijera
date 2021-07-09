@@ -1,10 +1,10 @@
 #include "Jugador.h"
-#include "SDLApp.h"
 #include "ObjectInfo.h"
+#include "SDLMain.h"
 #include <map>
 #include "Socket.h"
 
-class Game
+class GameClient
 {
 private:
     //Jugador controlado por este juego
@@ -24,11 +24,11 @@ private:
     bool isRunning = true;
 
 public:
-    Game(const char *s, const char *p, const char *n);
-    ~Game();
+    GameClient(const char *s, const char *p, const char *n);
+    ~GameClient();
 
     void render() const;
-    void initGame();
+    void initGameClient();
     void net_thread();
     void input_thread();
     void run();
