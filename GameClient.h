@@ -1,5 +1,5 @@
 #include "Jugador.h"
-#include "ObjectInfo.h"
+#include "GameObject.h"
 #include "SDLMain.h"
 #include <map>
 #include "Socket.h"

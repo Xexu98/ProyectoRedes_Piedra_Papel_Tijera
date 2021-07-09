@@ -1,5 +1,5 @@
 #include "GameServer.h"
-#include "Message.h"
+#include "ClientMessage.h"
 #include <memory>
 #include <ctime>
 #include <cstdlib>

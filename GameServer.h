@@ -1,7 +1,7 @@
 #include "Socket.h"
 #include <vector>
 #include <map>
-#include "ObjectInfo.h"
+#include "GameObject.h"
 #include <memory>
 #include <mutex>
 

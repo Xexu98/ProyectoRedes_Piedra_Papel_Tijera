@@ -2,7 +2,7 @@
 #include "ClientMessage.h"
 #include "Resources.h"
 #include "InputManager.h"
-#include "Constants.h"
+
 
 void GameClient::initGameClient()
 {
