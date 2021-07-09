@@ -21,7 +21,7 @@ enum class MessageType: int8_t
     UNDEFINED = 8
 };
 
-class Message: public Serializable{
+class ClientMessage: public Serializable{
 protected:
     size_t messageSize = sizeof(MessageType);
     MessageType type;
@@ -40,10 +40,10 @@ protected:
 
 public:
     
-    Message();
-    Message(MessageType type_ ,Jugador* player_);
+    ClientMessage();
+    ClientMessage(MessageType type_ ,Jugador* player_);
     
-    virtual ~Message();
+    virtual ~ClientMessage();
 
     virtual void to_bin();
     virtual int from_bin(char * bobj);

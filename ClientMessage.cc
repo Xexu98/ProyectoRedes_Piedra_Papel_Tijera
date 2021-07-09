@@ -3,10 +3,10 @@
 #include "Jugador.h"
 #include <iostream>
 
-Message::Message() : type(MessageType::UNDEFINED)
+ClientMessage::ClientMessage() : type(MessageType::UNDEFINED)
 {
 }
-Message::Message(MessageType type_, Jugador *player_) : type(type_)
+ClientMessage::ClientMessage(MessageType type_, Jugador *player_) : type(type_)
 {
     nick = player_->getNick();
     objectInfo = ObjectInfo();
@@ -14,21 +14,21 @@ Message::Message(MessageType type_, Jugador *player_) : type(type_)
     objectInfo.pos = player_->getPlayerPos();
 }
 
-Message::~Message()
+ClientMessage::~ClientMessage()
 {
 }
 
-size_t Message::getMessageSize()
+size_t ClientMessage::getMessageSize()
 {
     return messageSize;
 }
 
-MessageType Message::getMessageType()
+MessageType ClientMessage::getMessageType()
 {
     return type;
 }
 
-void Message::to_bin()
+void ClientMessage::to_bin()
 {
     switch (type)
     {
@@ -82,7 +82,7 @@ void Message::to_bin()
     }
 }
 
-int Message::from_bin(char *bobj)
+int ClientMessage::from_bin(char *bobj)
 {
 
     //reservamos memoria para coger el tipo de mensaje
@@ -159,22 +159,22 @@ int Message::from_bin(char *bobj)
     return 0;
 }
 
-std::string Message::getNick()
+std::string ClientMessage::getNick()
 {
     return nick;
 }
 
-void Message::setNick(std::string newNick)
+void ClientMessage::setNick(std::string newNick)
 {
     nick = newNick;
 }
 
-void Message::setMsgType(MessageType type_)
+void ClientMessage::setMsgType(MessageType type_)
 {
     type = type_;
 }
 
-void Message::serializeTypeNick()
+void ClientMessage::serializeTypeNick()
 {
     //calculamos el tamaño del mensaje
 
@@ -197,7 +197,7 @@ void Message::serializeTypeNick()
     memcpy(temp, nick.c_str(), sizeof(char) * 12);
 }
 
-void Message::serializeObjectInfo()
+void ClientMessage::serializeObjectInfo()
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12 + sizeof(ObjectInfo);
 
@@ -224,7 +224,7 @@ void Message::serializeObjectInfo()
     memcpy(temp, &objectInfo, sizeof(ObjectInfo));
 }
 
-void Message::constructTypeNick(char *bobj)
+void ClientMessage::constructTypeNick(char *bobj)
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12;
     //reservamos la memoria
@@ -237,7 +237,7 @@ void Message::constructTypeNick(char *bobj)
     nick = temp;
 }
 
-void Message::constructObjectInfo(char *bobj)
+void ClientMessage::constructObjectInfo(char *bobj)
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12 + sizeof(ObjectInfo);
     //reservamos la memoria
