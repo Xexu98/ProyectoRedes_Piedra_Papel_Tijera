@@ -1,51 +1,38 @@
-#ifndef GAME_H
-#define GAME_H
 
-#include <SDL2/SDL.h>
-#include "Mapa.h"
-#include <vector>
-
+#include "SDLApp.h"
+#include "ObjectInfo.h"
 #include <map>
+#include "Socket.h"
+#include "Button.h"
 
-#include "GameObject.h"
-
-class Mapa;
-
-const int N_LANES = 5;
-const int INITIAL_RESOLUTION_X = 1024;
-const int INITIAL_RESOLUTION_Y = 720;
-
-class Game : public Serializable
+class Game
 {
 private:
-    double startY;
-    double endY;
+ 
+    //Lista con la informacion de los otros jugadores
+    std::map<std::string, ObjectInfo> jugadores;
 
-   
+    //Referencia a la App de SDL para gestionar el pintado, la ventana etc
+    SDLApp *app = nullptr;
+    //Textura de fondo
+    SDLTexture *background = nullptr;
+    //SOcket para comunicarnos con el servidor
+    Socket socket;
 
-    int nPlayers;
-    int winner;
+    Button* bPapel=nullptr;
+    Button* bTijeras=nullptr;
+    Button* bPiedra=nullptr;
 
-    SDL_Renderer *renderer;
-
-
-    std::vector<Mapa*> tracks;
-    Mapa* mapo;
+    //booleano para determinar si hemos perdido o no
+    bool isRunning = true;
 
 public:
-    Game();
-    Game(SDL_Renderer *r);
+    Game(const char *s, const char *p, const char *n);
     ~Game();
 
-    virtual void to_bin();
-    virtual int from_bin(char *data);
-
-    bool vicotria(){return false;}
-    void start();
-    void update(double deltaTime);
-    void render();
-    void handleInput(int i, Input input);
-
+    void render() const;
+    void initGame();
+    void net_thread();
+    void input_thread();
+    void run();
 };
-
-#endif

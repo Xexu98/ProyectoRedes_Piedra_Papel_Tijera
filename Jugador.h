@@ -4,23 +4,28 @@
 #include <string>
 class SDLTexture;
  
-class Button{
+class Jugador{
 private:
 
+    std::string nick;
     SDLTexture* texture = nullptr;
     Vector2D pos;
     int16_t tam;
 
 public:
-  
-    Button();
-    ~Button();
+    /**
+     * @param s dirección del servidor
+     * @param p puerto del servidor
+     * @param n nick del usuario
+     */
+    Jugador(const char * n);
+    ~Jugador();
 
     std::string getNick(){return nick;}
 
-    SDLTexture* getButtonTexture();
-    Vector2D getButtonPos();
-    int16_t getButtonTam();
+    SDLTexture* getPlayerTexture();
+    Vector2D getPlayerPos();
+    int16_t getPlayerTam();
 
     void setPosition(const Vector2D& newPos);
     void setTam(int16_t newTam);

@@ -1,5 +1,3 @@
-#ifndef CLIENT_MESSAGE_H
-#define CLIENT_MESSAGE_H
 #pragma once
 #include "Serializable.h"
 #include  <string>
@@ -12,16 +10,15 @@ enum class MessageType: int8_t
 {
     LOGIN   = 0,
     PLAYERINFO = 1,
-    PICKUPEAT = 2,
-    NEWPICKUP = 3,
-    PICKUPDESTROY = 4,
-    PLAYERDEAD = 5,
+    PIEDRA = 2,
+    PAPEL = 3,
+    TIJERAS = 4,
+    UNDEFINED = 5,
     LOGOUT  = 6,
-    NEWPLAYER = 7,
-    UNDEFINED = 8
+    NEWPLAYER = 7
 };
 
-class ClientMessage: public Serializable{
+class Message: public Serializable{
 protected:
     size_t messageSize = sizeof(MessageType);
     MessageType type;
@@ -40,10 +37,10 @@ protected:
 
 public:
     
-    ClientMessage();
-    ClientMessage(MessageType type_ ,Jugador* player_);
+    Message();
+    Message(MessageType type_ ,Jugador* player_);
     
-    virtual ~ClientMessage();
+    virtual ~Message();
 
     virtual void to_bin();
     virtual int from_bin(char * bobj);

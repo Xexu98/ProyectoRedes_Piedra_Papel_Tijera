@@ -1,110 +1,163 @@
 #include "Game.h"
-#include "Mapa.h"
+#include "Message.h"
+#include "Resources.h"
+#include "InputManager.h"
+#include "Constants.h"
 
-#include <algorithm>
+void Game::initGame()
+{
+    //Mandamos mensaje de login
+    Message logMsg = Message(MessageType::LOGIN, mainPlayer);
 
-Game::Game() : Serializable(), tracks(std::vector<Mapa *>()),
-               winner(0), nPlayers(2), renderer(nullptr), startY(INITIAL_RESOLUTION_Y - 100){
-    start();
+    if (socket.send(logMsg, socket) == -1)
+    {
+        std::cout << "Error al enviar el mensaje de login\n";
+    }
 }
 
-Game::Game(SDL_Renderer *r) : Serializable(), tracks(std::vector<Mapa *>()),
-                              winner(0), nPlayers(2), renderer(r), startY(INITIAL_RESOLUTION_Y - 100) {}
+Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
+{
+    app = SDLApp::GetInstance();
+
+    //Creacion de las texturas
+    for (auto &image : Resources::imageRoutes)
+    {
+        app->getTextureManager()->loadFromImg(image.textureId, app->getRenderer(), image.filename);
+    }
+
+    mainPlayer = new Jugador(n);
+    mainPlayer->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Jugador1));
+    bPapel = new Button();
+    bTijeras = new Button();
+    bPiedra= new Button();
+    bPapel->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Papel));
+    bPapel->setPosition();
+    bPapel->setTam();
+    bTijeras->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Tijeras));
+    bPapel->setPosition();
+    bPapel->setTam();   
+    bPiedra->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Piedra));
+    bPapel->setPosition();
+    bPapel->setTam();
+    background = app->getTextureManager()->getTexture(Resources::TextureId::Escenario);
+}
 
 Game::~Game()
 {
+    //Destruir al jugador
+    delete mainPlayer;
+
+    //Destruir tb la ventana de SDL
+    delete app;
 }
 
-void Game::to_bin()
+void Game::net_thread()
 {
-    int dataSize = 0;
-
-    for (Mapa *track : tracks)
+    while (isRunning)
     {
-        if (track != nullptr)
+        //Recibir Mensajes de red
+        Message em;
+
+        socket.recv(em);
+
+        //Mostrar en pantalla el mensaje de la forma "nick: mensaje"
+        std::cout << "Recibido mensaje de: " << em.getNick() << " de tipo " << (int)em.getMessageType() << "\n";
+
+        switch (em.getMessageType())
         {
-            track->to_bin();
-            dataSize += track->size();
-        }
-    }
-
-    alloc_data(dataSize + sizeof(int));
-
-    char *aux = _data;
-
-    nPlayers = tracks.size();
-    memcpy(aux, &nPlayers, sizeof(int));
-    aux += sizeof(int);
-
-    for (Mapa *track : tracks)
-    {
-        if (track != nullptr)
+        case MessageType::NEWPLAYER:
         {
-            memcpy(aux, track->data(), track->size());
-            aux += track->size();
-        }
-    }
-}
-
-int Game::from_bin(char *data)
-{
-    try
-    {
-        char *aux = data;
-        memcpy(&nPlayers, aux, sizeof(int));
-        aux += sizeof(int);
-
-        if (tracks.size() < nPlayers)
-            for (int i = tracks.size(); i < nPlayers; i++)
-                tracks.push_back(new Mapa(renderer));
-
-        //Reconstruir la clase usando el buffer data
-        for (int i = 0; i < nPlayers; i++)
-        {
-            Mapa *track = tracks[i];
-            if (track != nullptr)
+            ObjectInfo p = em.getObjectInfo();
+            if (em.getNick() != mainPlayer->getNick())
+                jugadores[em.getNick()] = p;
+            else
             {
-                track->from_bin(aux);
-                aux += track->size();
+                mainPlayer->setPosition(p.pos);
+                mainPlayer->setTam(p.tam);
             }
+
+            break;
+        }
+        case MessageType::PLAYERINFO:
+        {
+            ObjectInfo p = em.getObjectInfo();
+            jugadores[em.getNick()] = p;
+            break;
         }
 
-        return 0;
+        }
     }
-    catch (std::exception e)
-    {
-        std::cout << "Error al deserializar\n";
-        return -1;
-    }
+
 }
 
-void Game::start()
+void Game::input_thread()
 {
-    for (int i = 0; i < nPlayers; i++)
-        tracks.push_back(new Mapa(renderer, {i * (double)INITIAL_RESOLUTION_X / (double)nPlayers, startY}, INITIAL_RESOLUTION_X / nPlayers));
-}
 
-void Game::update(double deltaTime)
-{
-    for (Mapa *track : tracks)
-        if (track != nullptr)
-            track->update(deltaTime);
-}
+    //Updateamos la instancia del input
+    HandleEvents::instance()->update();
 
-void Game::render()
-{   int i=0;
-    for (Mapa *track : tracks)
+    Vector2D playerPos = mainPlayer->getPlayerPos();
+    bool sendMessage = false;
+    //Movemos al jugador localmente
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_1))
     {
-        if (track != nullptr)
-            track->render();
+        if (isRunning)
+        {
+            Message m(MessageType::PIEDRA, mainPlayer);
+            socket.send(m, socket);
+        }
+        
     }
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_2))
+    {
+      if (isRunning)
+        {
+           Message m(MessageType::PAPEL, mainPlayer);
+            socket.send(m, socket);
+        }
+    }
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_3) )
+    {
+       if (isRunning)
+        {
+             Message m(MessageType::TIJERAS, mainPlayer);
+            socket.send(m, socket);
+        }
+    }
+
+}
+
+void Game::render() const
+{
+
+    //Limpiamos el renderer
+    SDL_RenderClear(app->getRenderer());
+
+    //Pintamos el fonfo
+    background->render({0, 0, app->winWidth_, app->winHeight_}, SDL_FLIP_NONE);
     
+    //Pintamos a los objetos
+
+    //Pintamos a nuestro jugador
+    mainPlayer->getPlayerTexture()->render({(int)mainPlayer->getPlayerPos().getX(),
+                                            (int)mainPlayer->getPlayerPos().getY(),
+                                            mainPlayer->getPlayerTam(),
+                                            mainPlayer->getPlayerTam()});
+
+
+    bPapel->getButtonTexture()->render();
+    bTijeras->getButtonTexture()->render();
+    bPiedra->getButtonTexture()->render();
+
+    //Volcamos sobre la ventana
+    SDL_RenderPresent(app->getRenderer());
 }
 
-void Game::handleInput(int i, Input input)
-{   
-    if (i < tracks.size() && tracks[i] != nullptr)
-        tracks[i]->handleInput(input);
+void Game::run()
+{
+    while (isRunning)
+    {
+        input_thread();
+        render();
+    }
 }
-
-

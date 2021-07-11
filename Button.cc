@@ -1,31 +1,41 @@
 #include "Button.h"
-#include "Game.h"
-#include <iostream>
+#include "Message.h"
+#include "SDLTexture.h"
 
-Button::Button(SDL_Renderer *renderer, std::string filename, const Vector2D &pos, const Vector2D &size, std::string msg)
-	: GameObject(renderer, filename, pos, Vector2D(), size)
+Button::Button()
 {
-	_msg = msg;
-	position=pos;
-	tam=size;
 }
 
-
-void Button::handleInput(Input input)
+Button::~Button()
 {
-
-	switch (input)
-	{
-	 case LEFTCLICK:
-	   int xMouse;
-	   int yMouse;
-	   SDL_GetMouseState(&xMouse,&yMouse);
-	   
-	   if (isInside(Vector2D(xMouse,yMouse))){
-	 	  
-		   std::cout<<"click\n";
-	   }
-	 	break;
-	}
 }
 
+void Button::setPosition(const Vector2D &newPos)
+{
+    pos = newPos;
+}
+
+void Button::setTam(int16_t newTam)
+{
+    tam = newTam;
+}
+
+void Button::setTexture(SDLTexture *newTexture)
+{
+    texture = newTexture;
+}
+
+SDLTexture *Button::getPlayerTexture()
+{
+    return texture;
+}
+
+Vector2D Button::getPlayerPos()
+{
+    return pos;
+}
+
+int16_t Button::getPlayerTam()
+{
+    return tam;
+}

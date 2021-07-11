@@ -1,12 +1,12 @@
-#include "ClientMessage.h"
+#include "Message.h"
 #include <memory.h>
 #include "Jugador.h"
 #include <iostream>
 
-ClientMessage::ClientMessage() : type(MessageType::UNDEFINED)
+Message::Message() : type(MessageType::UNDEFINED)
 {
 }
-ClientMessage::ClientMessage(MessageType type_, Jugador *player_) : type(type_)
+Message::Message(MessageType type_, Jugador *player_) : type(type_)
 {
     nick = player_->getNick();
     objectInfo = ObjectInfo();
@@ -14,21 +14,21 @@ ClientMessage::ClientMessage(MessageType type_, Jugador *player_) : type(type_)
     objectInfo.pos = player_->getPlayerPos();
 }
 
-ClientMessage::~ClientMessage()
+Message::~Message()
 {
 }
 
-size_t ClientMessage::getMessageSize()
+size_t Message::getMessageSize()
 {
     return messageSize;
 }
 
-MessageType ClientMessage::getMessageType()
+MessageType Message::getMessageType()
 {
     return type;
 }
 
-void ClientMessage::to_bin()
+void Message::to_bin()
 {
     switch (type)
     {
@@ -44,12 +44,22 @@ void ClientMessage::to_bin()
         break;
     }
 
-    case MessageType::PLAYERINFO:
+    case MessageType::PAPEL:
     {
         serializeObjectInfo();
         break;
     }
-      case MessageType::NEWPICKUP:
+     case MessageType::PIEDRA:
+    {
+        serializeObjectInfo();
+        break;
+    }
+     case MessageType::TIJERAS:
+    {
+        serializeObjectInfo();
+        break;
+    }
+    case MessageType::PLAYERINFO:
     {
         serializeObjectInfo();
         break;
@@ -61,28 +71,10 @@ void ClientMessage::to_bin()
         break;
     }
 
-    case MessageType::PLAYERDEAD:
-    {
-        serializeTypeNick();
-        break;
-    }
-
-    case MessageType::PICKUPDESTROY:
-    {
-        serializeTypeNick();
-        break;
-    }
-
-       case MessageType::PICKUPEAT:
-    {
-        serializeObjectInfo();
-        break;
-    }
-    
     }
 }
 
-int ClientMessage::from_bin(char *bobj)
+int Message::from_bin(char *bobj)
 {
 
     //reservamos memoria para coger el tipo de mensaje
@@ -118,35 +110,25 @@ int ClientMessage::from_bin(char *bobj)
         constructObjectInfo(bobj);
         break;
     }
+    case MessageType::PIEDRA:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+    case MessageType::PAPEL:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+    case MessageType::TIJERAS:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
 
     case MessageType::NEWPLAYER:
     {
         std::cout << "NEWPLAYER\n";
-        constructObjectInfo(bobj);
-        break;
-    }
-    case MessageType::PLAYERDEAD:
-    {
-        std::cout << "PLAYERDEAD\n";
-        constructTypeNick(bobj);
-        break;
-    }
-       case MessageType::PICKUPDESTROY:
-    {
-        std::cout << "PICKUPDESTROY\n";
-        constructTypeNick(bobj);
-        break;
-    }
-
-     case MessageType::NEWPICKUP:
-    {
-        std::cout << "NEWPICKUP\n";
-        constructObjectInfo(bobj);
-        break;
-    }
-       case MessageType::PICKUPEAT:
-    {
-        std::cout << "PICKUPEAT\n";
         constructObjectInfo(bobj);
         break;
     }
@@ -159,22 +141,22 @@ int ClientMessage::from_bin(char *bobj)
     return 0;
 }
 
-std::string ClientMessage::getNick()
+std::string Message::getNick()
 {
     return nick;
 }
 
-void ClientMessage::setNick(std::string newNick)
+void Message::setNick(std::string newNick)
 {
     nick = newNick;
 }
 
-void ClientMessage::setMsgType(MessageType type_)
+void Message::setMsgType(MessageType type_)
 {
     type = type_;
 }
 
-void ClientMessage::serializeTypeNick()
+void Message::serializeTypeNick()
 {
     //calculamos el tamaño del mensaje
 
@@ -197,7 +179,7 @@ void ClientMessage::serializeTypeNick()
     memcpy(temp, nick.c_str(), sizeof(char) * 12);
 }
 
-void ClientMessage::serializeObjectInfo()
+void Message::serializeObjectInfo()
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12 + sizeof(ObjectInfo);
 
@@ -224,7 +206,7 @@ void ClientMessage::serializeObjectInfo()
     memcpy(temp, &objectInfo, sizeof(ObjectInfo));
 }
 
-void ClientMessage::constructTypeNick(char *bobj)
+void Message::constructTypeNick(char *bobj)
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12;
     //reservamos la memoria
@@ -237,7 +219,7 @@ void ClientMessage::constructTypeNick(char *bobj)
     nick = temp;
 }
 
-void ClientMessage::constructObjectInfo(char *bobj)
+void Message::constructObjectInfo(char *bobj)
 {
     messageSize = sizeof(MessageType) + sizeof(char) * 12 + sizeof(ObjectInfo);
     //reservamos la memoria

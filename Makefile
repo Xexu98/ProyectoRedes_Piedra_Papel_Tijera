@@ -1,21 +1,17 @@
-CC = g++
-CFLAGS = -g -I.
-DEPS = Socket.h ClientMessage.h GameClient.h GameServer.h GameObject.h Vector2D. Game.h Button.h Texture.h Mapa.h 
-OBJ = Socket.o ClientMessage.o GameClient.o GameServer.o GameObject.o Vector2D.o Game.o Button.o Texture.o Mapa.o 
-LIBS = -lpthread -lSDL2 -lSDL2_image
+DEPS = Vector2D.h  PlayerInfo.h Resources.h InputManager.h SDLTexture.h TextureManager.h Socket.h Message.h GameServer.h SDLApp.h Button.h Game.h  ChatClient.h ChatServer.h
 
+SERVER = Vector2D.o  Resources.o Socket.o Button.o Message.o GameServer.o
+CLIENT = Vector2D.o  Resources.o InputManager.o SDLTexture.o TextureManager.o Socket.o Button.o Message.o SDLApp.o  Game.o 
+#LINKER_FLAGS specifies the libraries we're linking against
+LIBS =  -lpthread 
+LIBSSDL=-lSDL2 -lSDL2_image -lSDL2_ttf
 %.o: %.cc $(DEPS)
 	$(CC) -g -c -o $@ $< $(CFLAGS)
-
-all: gameServer gameClient
-
-gameServer: $(OBJ) Server.o
-	g++ -o $@ $^ $(CFLAGS) $(LIBS)
-
-gameClient: $(OBJ) Client.o
-	g++ -o $@ $^ $(CFLAGS) $(LIBS)
-
+all: cs cc
+cs: $(SERVER) ChatServer.o
+	g++ -o $@ $^ $(CFLAGS) `pkg-config --cflags --libs sdl2` $(LIBS) $(LIBSSDL)
+cc: $(CLIENT) ChatClient.o
+	g++ -o $@ $^ $(CFLAGS) `pkg-config --cflags --libs sdl2` $(LIBS) $(LIBSSDL) 
 .PHONY: clean
-
 clean:
-	rm -f *.o gameServer gameClient
+	rm -f *.o server client

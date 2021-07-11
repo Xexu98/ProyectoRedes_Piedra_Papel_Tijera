@@ -1,5 +1,5 @@
 #include "GameServer.h"
-#include "ClientMessage.h"
+#include "Message.h"
 #include <memory>
 #include <ctime>
 #include <cstdlib>
@@ -76,13 +76,7 @@ void GameServer::do_messages()
                 }
             }
 
-            for (auto it = objects.begin(); it != objects.end(); ++it)
-            {
-                newPlayerConnected.setMsgType(MessageType::NEWPICKUP);
-                newPlayerConnected.setNick((*it).first);
-                newPlayerConnected.setObjectInfo((*it).second);
-                socket.send(newPlayerConnected, *s);
-            }
+
 
             break;
         }
@@ -105,7 +99,15 @@ void GameServer::do_messages()
             }
             break;
         }
-
+        case MessageType::PIEDRA:
+        {
+        }
+          case MessageType::PAPEL:
+        {
+        }
+          case MessageType::TIJERAS:
+        {
+        }
         case MessageType::PLAYERINFO:
         {
             //Actualizamos la posición en la que se encuentra dicho jugador en la memoria del servidor
@@ -167,99 +169,9 @@ void GameServer::checkCollisions()
             }
         }
     }
-
-    for (auto it = players.begin(); it != players.end(); ++it)
-    {
-        for (auto it2 = objects.begin(); it2 != objects.end(); ++it2)
-        {
-            SDL_Rect a, b;
-            ObjectInfo ap = (*it).second, bp = (*it2).second;
-            a = {(int)ap.pos.getX(), (int)ap.pos.getY(), ap.tam, ap.tam};
-            b = {(int)bp.pos.getX(), (int)bp.pos.getY(), bp.tam, bp.tam};
-
-            //Si se solapan y el tamano de l objeto es menor que el del jugador nos lo comemos
-            if (SDL_HasIntersection(&a, &b) && ap.tam > bp.tam)
-            {
-                //Lo metemos en una lista para borrarlo posteriormente
-                objectsToErase.push_back(it2);
-
-                //Creamos el mensaje de comerse el objeto
-                Message m = Message();
-                m.setMsgType(MessageType::PICKUPEAT);
-                m.setNick((*it2).first);
-                m.setObjectInfo(bp);
-
-                //Lo enviamos exclusivamente al objeto que lo ha comido
-                socket.send(m, *(clients[(*it).first].get()));
-            }
-        }
-    }
-
-    for (auto player : playersToErase)
-    {
-        Message cm;
-        cm.setMsgType(MessageType::PLAYERDEAD);
-        cm.setObjectInfo((*player).second);
-        cm.setNick((*player).first);
-
-
-        //Avisamos a todos los clientes que un jugador va a ser borrado
-        for (auto i = clients.begin(); i != clients.end(); ++i)
-        {
-            socket.send(cm, (*((*i).second.get())));
-        }
-
-        players.erase((*player).first);
-    }
-
-    for (auto object : objectsToErase)
-    {
-        Message cm;
-        cm.setMsgType(MessageType::PICKUPDESTROY);
-        cm.setObjectInfo((*object).second);
-        cm.setNick((*object).first);
-        
-        //Avisamos a todos los clientes que un jugador va a ser borrado
-        for (auto i = clients.begin(); i != clients.end(); ++i)
-        {
-            socket.send(cm, (*((*i).second.get())));
-        }
-
-        objects.erase((*object).first);
-    }
 }
 
 void GameServer::createObjects()
 {
-    if (SDL_GetTicks() - initTime > TimeTocreate)
-    {
-        if (objects.size() < MAXOBJECTS)
-        {
-
-            //creo el objeto
-            ObjectInfo obj;
-            obj.tam = MIN_SIZE_PICKUP + rand() % MAX_SIZE_PICKUP;
-            obj.pos = Vector2D(rand() % (WINDOW_WIDTH- obj.tam), rand() % (WINDOW_HEIGHT - obj.tam));
-            std::string num = std::to_string(numObjects);
-            num.resize(12);
-            std::cout << "Valor del num :"<< num << "\n";
-            std::cout << "Tamano del string: "<<num.size() << "\n";
-            objects[num] = obj;
-
-            numObjects++;
-            
-            //mandar mensaje de objeto nuevo
-            Message cm;
-            cm.setMsgType(MessageType::NEWPICKUP);
-            cm.setObjectInfo((obj));
-            cm.setNick((num));
-            //Avisamos a todos los clientes que un objeto ha sido creado
-            for (auto i = clients.begin(); i != clients.end(); ++i)
-            {
-                socket.send(cm, (*((*i).second.get())));
-            }
-        }
-
-        initTime = SDL_GetTicks();
-    }
+    
 }
