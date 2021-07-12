@@ -7,6 +7,8 @@
 #include <list>
 #include "Constants.h"
 
+Message c1,c2;
+
 GameServer::GameServer(const char *s, const char *p) : socket(s, p)
 {
     //Inicializamos seed para numeros aleatorios
@@ -181,26 +183,33 @@ void GameServer::compruebaResultados()
 {
     if (elegidoC1 && elegidoC2)
     {
-
+        Message aux;
         if (c1.getMessageType() == c2.getMessageType())
         {
-            socket.send(MessageType::DRAW, clients[nickC1].get());
-            socket.send(MessageType::DRAW, clients[nickC2].get());
+            aux.setMsgType(MessageType::DRAW);
+            socket.send(aux, *clients[nickC1].get());
+            socket.send(aux, *clients[nickC2].get());
         }
         else if (c1.getMessageType() == MessageType::PAPEL  && c2.getMessageType()==  MessageType::PIEDRA)
         {
-            socket.send(MessageType::WIN, clients[nickC1].get());
-            socket.send(MessageType::LOOSE, clients[nickC2].get());
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC1].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC2].get());
         }
          else if (c1.getMessageType() == MessageType::TIJERAS && c2.getMessageType()== MessageType::PAPEL )
         {
-            socket.send(MessageType::WIN, clients[nickC1].get());
-            socket.send(MessageType::LOOSE, clients[nickC2].get());
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC1].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC2].get());
         }
          else if (c1.getMessageType() == MessageType::PIEDRA  && c2.getMessageType()==  MessageType::TIJERAS)
         {
-            socket.send(MessageType::WIN, clients[nickC1].get());
-            socket.send(MessageType::LOOSE, clients[nickC2].get());
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC1].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC2].get());
         }
         
         elegidoC2=false;

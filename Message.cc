@@ -1,17 +1,13 @@
 #include "Message.h"
 #include <memory.h>
-#include "Jugador.h"
 #include <iostream>
 
 Message::Message() : type(MessageType::UNDEFINED)
 {
 }
-Message::Message(MessageType type_, Jugador *player_) : type(type_)
+Message::Message(MessageType type_) : type(type_)
 {
-    nick = player_->getNick();
-    objectInfo = ObjectInfo();
-    objectInfo.tam = player_->getPlayerTam();
-    objectInfo.pos = player_->getPlayerPos();
+    
 }
 
 Message::~Message()

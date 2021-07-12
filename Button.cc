@@ -25,17 +25,17 @@ void Button::setTexture(SDLTexture *newTexture)
     texture = newTexture;
 }
 
-SDLTexture *Button::getPlayerTexture()
+SDLTexture *Button::getButtonTexture()
 {
     return texture;
 }
 
-Vector2D Button::getPlayerPos()
+Vector2D Button::getButtonPos()
 {
     return pos;
 }
 
-int16_t Button::getPlayerTam()
+int16_t Button::getButtonTam()
 {
     return tam;
 }

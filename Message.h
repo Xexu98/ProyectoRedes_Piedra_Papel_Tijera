@@ -41,7 +41,7 @@ protected:
 public:
     
     Message();
-    Message(MessageType type_ ,Jugador* player_);
+    Message(MessageType type_ );
     
     virtual ~Message();
 

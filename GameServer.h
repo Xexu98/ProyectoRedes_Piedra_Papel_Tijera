@@ -22,7 +22,6 @@ private:
      */
     bool elegidoC1=false;
     bool elegidoC2=false;
-    Message c1,c2;
     std::string nickC1,nickC2;
     std::map<std::string,std::unique_ptr<Socket>> clients;
     std::map<std::string,ObjectInfo > players;

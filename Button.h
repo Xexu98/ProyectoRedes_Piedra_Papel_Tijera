@@ -16,7 +16,7 @@ public:
     Button();
     ~Button();
 
-    std::string getNick(){return nick;}
+    //std::string getNick(){return nick;}
 
     SDLTexture* getButtonTexture();
     Vector2D getButtonPos();
