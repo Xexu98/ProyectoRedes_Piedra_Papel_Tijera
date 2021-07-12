@@ -30,14 +30,14 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
     bTijeras = new Button();
     bPiedra= new Button();
     bPapel->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Papel));
-    bPapel->setPosition();
-    bPapel->setTam();
+    bPapel->setPosition(Vector2D(200,300));
+    bPapel->setTam(0.5);
     bTijeras->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Tijeras));
-    bPapel->setPosition();
-    bPapel->setTam();   
+    bTijeras->setPosition(Vector2D(400,300));
+    bTijeras->setTam(0.5);   
     bPiedra->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Piedra));
-    bPapel->setPosition();
-    bPapel->setTam();
+    bPiedra->setPosition(Vector2D(0,300));
+    bPiedra->setTam(0.5);
     background = app->getTextureManager()->getTexture(Resources::TextureId::Escenario);
 }
 
@@ -73,14 +73,17 @@ void Game::net_thread()
         case MessageType::DRAW:
         {
             std::cout << "Empate \n";
+             waitingResult=false;
         }
          case MessageType::WIN:
         {
             std::cout << "Victoria \n" ;
+             waitingResult=false;
         }
          case MessageType::LOOSE:
         {
             std::cout << "Has perdido \n"; 
+            waitingResult=false;
         }        
         }
     }
@@ -90,9 +93,14 @@ void Game::net_thread()
 void Game::input_thread()
 {
 
+if (!waitingResult)
+{
+   
+
+
     //Updateamos la instancia del input
     HandleEvents::instance()->update();
-
+    
     bool sendMessage = false;
     //Movemos al jugador localmente
     if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_1))
@@ -101,6 +109,7 @@ void Game::input_thread()
         {
             Message m(MessageType::PIEDRA);
             socket.send(m, socket);
+            waitingResult=true;
         }
         
     }
@@ -110,17 +119,19 @@ void Game::input_thread()
         {
            Message m(MessageType::PAPEL);
             socket.send(m, socket);
+             waitingResult=true;
         }
     }
     if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_3) )
     {
        if (isRunning)
         {
-             Message m(MessageType::TIJERAS);
+            Message m(MessageType::TIJERAS);
             socket.send(m, socket);
+             waitingResult=true;
         }
     }
-
+}
 }
 
 void Game::render() const

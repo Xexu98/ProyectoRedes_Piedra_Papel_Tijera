@@ -22,7 +22,7 @@ private:
     Button* bPapel=nullptr;
     Button* bTijeras=nullptr;
     Button* bPiedra=nullptr;
-
+    bool waitingResult=false;
     //booleano para determinar si hemos perdido o no
     bool isRunning = true;
 
