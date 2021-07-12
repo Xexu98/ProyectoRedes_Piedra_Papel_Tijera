@@ -15,7 +15,10 @@ enum class MessageType: int8_t
     TIJERAS = 4,
     UNDEFINED = 5,
     LOGOUT  = 6,
-    NEWPLAYER = 7
+    NEWPLAYER = 7,
+    LOOSE=8,
+    WIN=9,
+    DRAW=10
 };
 
 class Message: public Serializable{

@@ -7,7 +7,7 @@
 void Game::initGame()
 {
     //Mandamos mensaje de login
-    Message logMsg = Message(MessageType::LOGIN, mainPlayer);
+    Message logMsg = Message(MessageType::LOGIN);
 
     if (socket.send(logMsg, socket) == -1)
     {
@@ -25,8 +25,7 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
         app->getTextureManager()->loadFromImg(image.textureId, app->getRenderer(), image.filename);
     }
 
-    mainPlayer = new Jugador(n);
-    mainPlayer->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Jugador1));
+   
     bPapel = new Button();
     bTijeras = new Button();
     bPiedra= new Button();
@@ -44,10 +43,6 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
 
 Game::~Game()
 {
-    //Destruir al jugador
-    delete mainPlayer;
-
-    //Destruir tb la ventana de SDL
     delete app;
 }
 
@@ -66,16 +61,7 @@ void Game::net_thread()
         switch (em.getMessageType())
         {
         case MessageType::NEWPLAYER:
-        {
-            ObjectInfo p = em.getObjectInfo();
-            if (em.getNick() != mainPlayer->getNick())
-                jugadores[em.getNick()] = p;
-            else
-            {
-                mainPlayer->setPosition(p.pos);
-                mainPlayer->setTam(p.tam);
-            }
-
+        {        
             break;
         }
         case MessageType::PLAYERINFO:
@@ -84,7 +70,18 @@ void Game::net_thread()
             jugadores[em.getNick()] = p;
             break;
         }
-
+        case MessageType::DRAW:
+        {
+            std::cout << "Empate \n";
+        }
+         case MessageType::WIN:
+        {
+            std::cout << "Victoria \n" ;
+        }
+         case MessageType::LOOSE:
+        {
+            std::cout << "Has perdido \n"; 
+        }        
         }
     }
 
@@ -96,14 +93,13 @@ void Game::input_thread()
     //Updateamos la instancia del input
     HandleEvents::instance()->update();
 
-    Vector2D playerPos = mainPlayer->getPlayerPos();
     bool sendMessage = false;
     //Movemos al jugador localmente
     if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_1))
     {
         if (isRunning)
         {
-            Message m(MessageType::PIEDRA, mainPlayer);
+            Message m(MessageType::PIEDRA);
             socket.send(m, socket);
         }
         
@@ -112,7 +108,7 @@ void Game::input_thread()
     {
       if (isRunning)
         {
-           Message m(MessageType::PAPEL, mainPlayer);
+           Message m(MessageType::PAPEL);
             socket.send(m, socket);
         }
     }
@@ -120,7 +116,7 @@ void Game::input_thread()
     {
        if (isRunning)
         {
-             Message m(MessageType::TIJERAS, mainPlayer);
+             Message m(MessageType::TIJERAS);
             socket.send(m, socket);
         }
     }

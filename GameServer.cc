@@ -101,12 +101,51 @@ void GameServer::do_messages()
         }
         case MessageType::PIEDRA:
         {
+          if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+              nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+          
         }
           case MessageType::PAPEL:
         {
+             if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+              nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+          
         }
           case MessageType::TIJERAS:
         {
+             if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+               nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+          
         }
         case MessageType::PLAYERINFO:
         {
@@ -138,40 +177,33 @@ void GameServer::do_messages()
     }
 }
 
-void GameServer::checkCollisions()
+void GameServer::compruebaResultados()
 {
-
-    std::list<std::map<std::string, ObjectInfo>::iterator> playersToErase;
-    std::list<std::map<std::string, ObjectInfo>::iterator> objectsToErase;
-
-    //colision de players con otros players
-    for (auto it = players.begin(); it != players.end(); ++it)
+    if (elegidoC1 && elegidoC2)
     {
-        for (auto it2 = std::next(it); it2 != players.end(); ++it2)
+
+        if (c1.getMessageType() == c2.getMessageType())
         {
-            SDL_Rect a, b;
-            ObjectInfo ap = (*it).second, bp = (*it2).second;
-            a = {(int)ap.pos.getX(), (int)ap.pos.getY(), ap.tam, ap.tam};
-            b = {(int)bp.pos.getX(), (int)bp.pos.getY(), bp.tam, bp.tam};
-
-            //Si se solapan y el tamaño entre los dos es distinto
-            //significa que uno muere
-            if (SDL_HasIntersection(&a, &b) && bp.tam != ap.tam)
-            {
-                if (ap.tam > bp.tam)
-                {
-                    playersToErase.push_back(it2);
-                }
-                else
-                {
-                    playersToErase.push_back(it);
-                }
-            }
+            socket.send(MessageType::DRAW, clients[nickC1].get());
+            socket.send(MessageType::DRAW, clients[nickC2].get());
         }
+        else if (c1.getMessageType() == MessageType::PAPEL  && c2.getMessageType()==  MessageType::PIEDRA)
+        {
+            socket.send(MessageType::WIN, clients[nickC1].get());
+            socket.send(MessageType::LOOSE, clients[nickC2].get());
+        }
+         else if (c1.getMessageType() == MessageType::TIJERAS && c2.getMessageType()== MessageType::PAPEL )
+        {
+            socket.send(MessageType::WIN, clients[nickC1].get());
+            socket.send(MessageType::LOOSE, clients[nickC2].get());
+        }
+         else if (c1.getMessageType() == MessageType::PIEDRA  && c2.getMessageType()==  MessageType::TIJERAS)
+        {
+            socket.send(MessageType::WIN, clients[nickC1].get());
+            socket.send(MessageType::LOOSE, clients[nickC2].get());
+        }
+        
+        elegidoC2=false;
+        elegidoC1=false;
     }
-}
-
-void GameServer::createObjects()
-{
-    
 }

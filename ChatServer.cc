@@ -9,8 +9,7 @@ int main(int argc, char **argv)
     
     while (true)
     {
-        es.checkCollisions();
-        es.createObjects();
+        es.compruebaResultados();
     }
     return 0;
 }

@@ -19,7 +19,7 @@ void SDLApp::initSDL(){
 	winX = winY = SDL_WINDOWPOS_CENTERED;
 	// InicializaciOn del sistema, ventana y renderer
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window_ = SDL_CreateWindow("Come&Calla", winX, winY, winWidth_,
+	window_ = SDL_CreateWindow("PiedraPapelOTijeras", winX, winY, winWidth_,
 		winHeight_, SDL_WINDOW_SHOWN);
 	  
 
