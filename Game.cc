@@ -43,6 +43,9 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
 
 Game::~Game()
 {
+    delete bPiedra;
+    delete bPapel;
+    delete bTijeras;
     delete app;
 }
 
@@ -61,7 +64,13 @@ void Game::net_thread()
         switch (em.getMessageType())
         {
         case MessageType::NEWPLAYER:
-        {        
+        {       
+            ObjectInfo obj=em.getObjectInfo();
+            if (em.getNick() != bPiedra->getNick())
+            {
+               jugadores[em.getNick()]=obj;
+            }
+             
             break;
         }
         case MessageType::PLAYERINFO:
@@ -143,14 +152,7 @@ void Game::render() const
     //Pintamos el fonfo
     background->render({0, 0, app->winWidth_, app->winHeight_}, SDL_FLIP_NONE);
     
-    //Pintamos a los objetos
-
-    //Pintamos a nuestro jugador
-   /* mainPlayer->getPlayerTexture()->render((int)mainPlayer->getPlayerPos().getX(),
-                                            (int)mainPlayer->getPlayerPos().getY(),
-                                            mainPlayer->getPlayerTam(),
-                                            mainPlayer->getPlayerTam()});*/
-
+    //Pintamos los botones
 
     bPapel->getButtonTexture()->render({(int)bPapel->getButtonPos().getX(),
                                             (int)bPapel->getButtonPos().getY(),
