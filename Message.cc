@@ -1,13 +1,14 @@
 #include "Message.h"
 #include <memory.h>
 #include <iostream>
+#include "Button.h"
 
 Message::Message() : type(MessageType::UNDEFINED)
 {
 }
-Message::Message(MessageType type_) : type(type_)
+Message::Message(MessageType type_,Button* b) : type(type_)
 {
-    
+    nick= b->getNick();
 }
 
 Message::~Message()
@@ -60,7 +61,21 @@ void Message::to_bin()
         serializeObjectInfo();
         break;
     }
-
+     case MessageType::WIN:
+    {
+        serializeObjectInfo();
+        break;
+    }
+     case MessageType::DRAW:
+    {
+        serializeObjectInfo();
+        break;
+    }
+     case MessageType::LOOSE:
+    {
+        serializeObjectInfo();
+        break;
+    }
     case MessageType::NEWPLAYER:
     {
         serializeObjectInfo();
@@ -121,7 +136,21 @@ int Message::from_bin(char *bobj)
         constructObjectInfo(bobj);
         break;
     }
-
+    case MessageType::WIN:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+    case MessageType::DRAW:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+    case MessageType::LOOSE:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
     case MessageType::NEWPLAYER:
     {
         std::cout << "NEWPLAYER\n";

@@ -10,13 +10,14 @@ private:
     SDLTexture* texture = nullptr;
     Vector2D pos;
     int16_t tam;
+    std::string nick;
 
 public:
   
-    Button();
+    Button(const char* n);
     ~Button();
 
-    //std::string getNick(){return nick;}
+    std::string getNick(){return nick;}
 
     SDLTexture* getButtonTexture();
     Vector2D getButtonPos();

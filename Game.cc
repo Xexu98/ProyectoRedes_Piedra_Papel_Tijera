@@ -7,7 +7,7 @@
 void Game::initGame()
 {
     //Mandamos mensaje de login
-    Message logMsg = Message(MessageType::LOGIN);
+    Message logMsg = Message(MessageType::LOGIN,bPiedra);
 
     if (socket.send(logMsg, socket) == -1)
     {
@@ -26,9 +26,9 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
     }
 
    
-    bPapel = new Button();
-    bTijeras = new Button();
-    bPiedra= new Button();
+    bPapel = new Button(n);
+    bTijeras = new Button(n);
+    bPiedra= new Button(n);
     bPapel->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Papel));
     bPapel->setPosition(Vector2D(200,300));
     bPapel->setTam(1);
@@ -107,7 +107,7 @@ if (!waitingResult)
     {
         if (isRunning)
         {
-            Message m(MessageType::PIEDRA);
+            Message m(MessageType::PIEDRA,bPiedra);
             socket.send(m, socket);
             waitingResult=true;
         }
@@ -117,7 +117,7 @@ if (!waitingResult)
     {
       if (isRunning)
         {
-           Message m(MessageType::PAPEL);
+           Message m(MessageType::PAPEL,bPapel);
             socket.send(m, socket);
              waitingResult=true;
         }
@@ -126,7 +126,7 @@ if (!waitingResult)
     {
        if (isRunning)
         {
-            Message m(MessageType::TIJERAS);
+            Message m(MessageType::TIJERAS,bTijeras);
             socket.send(m, socket);
              waitingResult=true;
         }

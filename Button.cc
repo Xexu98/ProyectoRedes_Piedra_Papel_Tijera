@@ -2,7 +2,7 @@
 #include "Message.h"
 #include "SDLTexture.h"
 
-Button::Button()
+Button::Button(const char* n):nick(n)
 {
 }
 

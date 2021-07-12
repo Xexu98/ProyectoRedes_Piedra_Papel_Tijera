@@ -3,7 +3,7 @@
 #include  <string>
 #include <SDL2/SDL.h>
 #include "ObjectInfo.h"
-class Jugador;
+class Button;
 
 
 enum class MessageType: int8_t
@@ -41,7 +41,7 @@ protected:
 public:
     
     Message();
-    Message(MessageType type_ );
+    Message(MessageType type_ ,Button* b);
     
     virtual ~Message();
 
