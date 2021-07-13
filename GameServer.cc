@@ -59,7 +59,7 @@ void GameServer::do_messages()
             newPlayerConnected.setMsgType(MessageType::NEWPLAYER);
             newPlayerConnected.setNick(cm.getNick());
             newPlayerConnected.setObjectInfo(players[cm.getNick()]);
-
+             std::cout << "newplayer\n";
             //Avisar a todos los jugadores conectados que ha entrado uno nuevo
             for (auto it = clients.begin(); it != clients.end(); it++)
             {
@@ -77,8 +77,6 @@ void GameServer::do_messages()
                     socket.send(newPlayerConnected, *s);
                 }
             }
-
-
 
             break;
         }
@@ -101,54 +99,7 @@ void GameServer::do_messages()
             }
             break;
         }
-        case MessageType::PIEDRA:
-        {
-          if (!elegidoC1)
-          {
-                nickC1=cm.getNick();
-                elegidoC1=true;
-                c1.setMsgType(cm.getMessageType());
-          }
-          else
-          {
-              nickC2=cm.getNick();
-                elegidoC2=true;
-                c2.setMsgType(cm.getMessageType());
-          }
-          
-        }
-          case MessageType::PAPEL:
-        {
-             if (!elegidoC1)
-          {
-                nickC1=cm.getNick();
-                elegidoC1=true;
-                c1.setMsgType(cm.getMessageType());
-          }
-          else
-          {
-              nickC2=cm.getNick();
-                elegidoC2=true;
-                c2.setMsgType(cm.getMessageType());
-          }
-          
-        }
-          case MessageType::TIJERAS:
-        {
-             if (!elegidoC1)
-          {
-                nickC1=cm.getNick();
-                elegidoC1=true;
-                c1.setMsgType(cm.getMessageType());
-          }
-          else
-          {
-               nickC2=cm.getNick();
-                elegidoC2=true;
-                c2.setMsgType(cm.getMessageType());
-          }
-          
-        }
+
         case MessageType::PLAYERINFO:
         {
             //Actualizamos la posición en la que se encuentra dicho jugador en la memoria del servidor
@@ -162,7 +113,60 @@ void GameServer::do_messages()
                     socket.send(cm, (*((*it).second.get())));
                 }
             }
+            std::cout << "entro\n";
+            break;
+        }
+         case MessageType::PIEDRA:
+        {
+             if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+              nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+            std::cout<<"Piedra \n"; 
+            break;
+        }
 
+         case MessageType::PAPEL:
+        {
+             if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+              nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+            std::cout<<"PAPEL \n"; 
+            break;
+        }
+
+         case MessageType::TIJERAS:
+        {
+             if (!elegidoC1)
+          {
+                nickC1=cm.getNick();
+                elegidoC1=true;
+                c1.setMsgType(cm.getMessageType());
+          }
+          else
+          {
+                nickC2=cm.getNick();
+                elegidoC2=true;
+                c2.setMsgType(cm.getMessageType());
+          }
+            std::cout<<"TIJERAS \n"; 
             break;
         }
         default:
@@ -178,10 +182,9 @@ void GameServer::do_messages()
 
     }
 }
-
 void GameServer::compruebaResultados()
 {
-    if (elegidoC1 && elegidoC2)
+ if (elegidoC1 && elegidoC2)
     {
         Message aux;
         if (c1.getMessageType() == c2.getMessageType())
@@ -210,6 +213,29 @@ void GameServer::compruebaResultados()
             socket.send(aux, *clients[nickC1].get());
             aux.setMsgType(MessageType::LOOSE);
             socket.send(aux, *clients[nickC2].get());
+        }
+
+
+        else if (c2.getMessageType() == MessageType::PAPEL  && c1.getMessageType()==  MessageType::PIEDRA)
+        {
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC2].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC1].get());
+        }
+         else if (c2.getMessageType() == MessageType::TIJERAS && c1.getMessageType()== MessageType::PAPEL )
+        {
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC2].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC1].get());
+        }
+         else if (c2.getMessageType() == MessageType::PIEDRA  && c1.getMessageType()==  MessageType::TIJERAS)
+        {
+            aux.setMsgType(MessageType::WIN);
+            socket.send(aux, *clients[nickC2].get());
+            aux.setMsgType(MessageType::LOOSE);
+            socket.send(aux, *clients[nickC1].get());
         }
         
         elegidoC2=false;

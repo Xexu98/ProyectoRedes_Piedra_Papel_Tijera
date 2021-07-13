@@ -7,7 +7,7 @@
 void Game::initGame()
 {
     //Mandamos mensaje de login
-    Message logMsg = Message(MessageType::LOGIN,bPiedra);
+    Message logMsg = Message(MessageType::LOGIN, piedra);
 
     if (socket.send(logMsg, socket) == -1)
     {
@@ -25,27 +25,35 @@ Game::Game(const char *s, const char *p, const char *n) : socket(s, p)
         app->getTextureManager()->loadFromImg(image.textureId, app->getRenderer(), image.filename);
     }
 
-   
-    bPapel = new Button(n);
-    bTijeras = new Button(n);
-    bPiedra= new Button(n);
-    bPapel->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Papel));
-    bPapel->setPosition(Vector2D(200,300));
-    bPapel->setTam(1);
-    bTijeras->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Tijeras));
-    bTijeras->setPosition(Vector2D(400,300));
-    bTijeras->setTam(1);   
-    bPiedra->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Piedra));
-    bPiedra->setPosition(Vector2D(0,300));
-    bPiedra->setTam(1);
+   // mainPlayer = new Jugador(n);
+   // mainPlayer->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Jugador1));
+    
+    piedra= new Button(n);
+    piedra->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Piedra));
+    piedra->setPosition(Vector2D(0,150));
+    piedra->setTam(200);
+
+      papel= new Button(n);
+    papel->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Papel));
+    papel->setPosition(Vector2D(200,150));
+    papel->setTam(200);
+
+      tijeras= new Button(n);
+    tijeras->setTexture(app->getTextureManager()->getTexture(Resources::TextureId::Tijeras));
+    tijeras->setPosition(Vector2D(400,150));
+    tijeras->setTam(200);
+
     background = app->getTextureManager()->getTexture(Resources::TextureId::Escenario);
 }
 
 Game::~Game()
 {
-    delete bPiedra;
-    delete bPapel;
-    delete bTijeras;
+    //Destruir al jugador
+    //delete mainPlayer;
+    delete piedra;
+    delete papel;
+    delete tijeras;
+    //Destruir tb la ventana de SDL
     delete app;
 }
 
@@ -64,13 +72,16 @@ void Game::net_thread()
         switch (em.getMessageType())
         {
         case MessageType::NEWPLAYER:
-        {       
-            ObjectInfo obj=em.getObjectInfo();
-            if (em.getNick() != bPiedra->getNick())
+        {
+            ObjectInfo p = em.getObjectInfo();
+            if (em.getNick() != piedra->getNick())
+                jugadores[em.getNick()] = p;
+            else
             {
-               jugadores[em.getNick()]=obj;
+                //mainPlayer->setPosition(p.pos);
+                //mainPlayer->setTam(p.tam);
             }
-             
+
             break;
         }
         case MessageType::PLAYERINFO:
@@ -83,17 +94,20 @@ void Game::net_thread()
         {
             std::cout << "Empate \n";
              waitingResult=false;
+             break;
         }
          case MessageType::WIN:
         {
             std::cout << "Victoria \n" ;
              waitingResult=false;
+             break;
         }
          case MessageType::LOOSE:
         {
             std::cout << "Has perdido \n"; 
             waitingResult=false;
-        }        
+            break;
+        }     
         }
     }
 
@@ -102,45 +116,41 @@ void Game::net_thread()
 void Game::input_thread()
 {
 
-if (!waitingResult)
-{
-   
-
-
     //Updateamos la instancia del input
-    HandleEvents::instance()->update();
+    if (!waitingResult)
+    {      
     
+    HandleEvents::instance()->update();
     bool sendMessage = false;
-    //Movemos al jugador localmente
     if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_1))
     {
-        if (isRunning)
+        if ( isRunning)
         {
-            Message m(MessageType::PIEDRA,bPiedra);
+            Message m(MessageType::PIEDRA, piedra);
             socket.send(m, socket);
             waitingResult=true;
         }
-        
     }
     if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_2))
     {
-      if (isRunning)
+        if ( isRunning)
         {
-           Message m(MessageType::PAPEL,bPapel);
+            Message m(MessageType::PAPEL, piedra);
             socket.send(m, socket);
-             waitingResult=true;
+            waitingResult=true;
         }
     }
-    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_3) )
+    if (HandleEvents::instance()->isKeyDown(SDL_SCANCODE_3))
     {
-       if (isRunning)
+        if ( isRunning)
         {
-            Message m(MessageType::TIJERAS,bTijeras);
+            Message m(MessageType::TIJERAS, piedra);
             socket.send(m, socket);
-             waitingResult=true;
+            waitingResult=true;
         }
     }
-}
+    }
+
 }
 
 void Game::render() const
@@ -152,20 +162,24 @@ void Game::render() const
     //Pintamos el fonfo
     background->render({0, 0, app->winWidth_, app->winHeight_}, SDL_FLIP_NONE);
     
-    //Pintamos los botones
+    //Pintamos a los objetos
 
-    bPapel->getButtonTexture()->render({(int)bPapel->getButtonPos().getX(),
-                                            (int)bPapel->getButtonPos().getY(),
-                                            bPapel->getButtonTam(),
-                                            bPapel->getButtonTam()});
-    bTijeras->getButtonTexture()->render({(int)bTijeras->getButtonPos().getX(),
-                                            (int)bTijeras->getButtonPos().getY(),
-                                            bTijeras->getButtonTam(),
-                                            bTijeras->getButtonTam()});
-    bPiedra->getButtonTexture()->render({(int)bPiedra->getButtonPos().getX(),
-                                            (int)bPiedra->getButtonPos().getY(),
-                                            bPiedra->getButtonTam(),
-                                            bPiedra->getButtonTam()});
+    piedra->getButtonTexture()->render({(int)piedra->getButtonPos().getX(),
+                                            (int)piedra->getButtonPos().getY(),
+                                            piedra->getButtonTam(),
+                                            piedra->getButtonTam()});
+
+    papel->getButtonTexture()->render({(int)papel->getButtonPos().getX(),
+                                            (int)papel->getButtonPos().getY(),
+                                            papel->getButtonTam(),
+                                            papel->getButtonTam()});
+
+     tijeras->getButtonTexture()->render({(int)tijeras->getButtonPos().getX(),
+                                            (int)tijeras->getButtonPos().getY(),
+                                            tijeras->getButtonTam(),
+                                            tijeras->getButtonTam()});
+   
+
 
     //Volcamos sobre la ventana
     SDL_RenderPresent(app->getRenderer());

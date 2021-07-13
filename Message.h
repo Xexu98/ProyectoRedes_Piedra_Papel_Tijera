@@ -10,15 +10,16 @@ enum class MessageType: int8_t
 {
     LOGIN   = 0,
     PLAYERINFO = 1,
-    PIEDRA = 2,
-    PAPEL = 3,
-    TIJERAS = 4,
-    UNDEFINED = 5,
+    WIN = 2,
+    PIEDRA = 3,
+    PAPEL = 4,
+    TIJERAS = 5,
     LOGOUT  = 6,
     NEWPLAYER = 7,
-    LOOSE=8,
-    WIN=9,
-    DRAW=10
+    UNDEFINED = 8,
+    DRAW=9,
+    LOOSE=10,
+    
 };
 
 class Message: public Serializable{
@@ -41,7 +42,7 @@ protected:
 public:
     
     Message();
-    Message(MessageType type_ ,Button* b);
+    Message(MessageType type_ ,Button* player_);
     
     virtual ~Message();
 

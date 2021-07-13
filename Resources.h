@@ -12,12 +12,9 @@ public:
 	///<summary>Enum para las distintas imagenes del juego</summary>
 	enum TextureId : int {
 		Escenario,
-		Jugador1,
-		Jugador2,
-		Papel,
-		Tijeras,
 		Piedra,
-		Objeto,
+		Papel,
+		Tijeras
 	};
 
 	enum MusicChannels : int {

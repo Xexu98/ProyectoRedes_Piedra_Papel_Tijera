@@ -1,14 +1,17 @@
 #include "Message.h"
 #include <memory.h>
-#include <iostream>
 #include "Button.h"
+#include <iostream>
 
 Message::Message() : type(MessageType::UNDEFINED)
 {
 }
-Message::Message(MessageType type_,Button* b) : type(type_)
+Message::Message(MessageType type_, Button *player_) : type(type_)
 {
-    nick= b->getNick();
+    nick = player_->getNick();
+    objectInfo = ObjectInfo();
+    //objectInfo.tam = player_->getPlayerTam();
+    //objectInfo.pos = player_->getPlayerPos();
 }
 
 Message::~Message()
@@ -39,6 +42,31 @@ void Message::to_bin()
     {
         serializeTypeNick();
         break;
+    }  
+
+
+     case MessageType::WIN:
+    {
+        serializeObjectInfo();
+        break;
+    }
+
+     case MessageType::DRAW:
+    {
+        serializeObjectInfo();
+        break;
+    }
+
+     case MessageType::LOOSE:
+    {
+        serializeObjectInfo();
+        break;
+    }
+
+    case MessageType::PIEDRA:
+    {
+        serializeObjectInfo();
+        break;
     }
 
     case MessageType::PAPEL:
@@ -46,42 +74,25 @@ void Message::to_bin()
         serializeObjectInfo();
         break;
     }
-     case MessageType::PIEDRA:
-    {
-        serializeObjectInfo();
-        break;
-    }
+
      case MessageType::TIJERAS:
     {
         serializeObjectInfo();
         break;
     }
+
     case MessageType::PLAYERINFO:
     {
         serializeObjectInfo();
         break;
     }
-     case MessageType::WIN:
-    {
-        serializeObjectInfo();
-        break;
-    }
-     case MessageType::DRAW:
-    {
-        serializeObjectInfo();
-        break;
-    }
-     case MessageType::LOOSE:
-    {
-        serializeObjectInfo();
-        break;
-    }
+
     case MessageType::NEWPLAYER:
     {
         serializeObjectInfo();
         break;
     }
-
+    
     }
 }
 
@@ -121,42 +132,51 @@ int Message::from_bin(char *bobj)
         constructObjectInfo(bobj);
         break;
     }
-    case MessageType::PIEDRA:
+
+     case MessageType::WIN:
     {
         constructObjectInfo(bobj);
         break;
     }
+
+     case MessageType::DRAW:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+
+     case MessageType::LOOSE:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+
+
+     case MessageType::PIEDRA:
+    {
+        constructObjectInfo(bobj);
+        break;
+    }
+
     case MessageType::PAPEL:
     {
         constructObjectInfo(bobj);
         break;
     }
+
     case MessageType::TIJERAS:
     {
         constructObjectInfo(bobj);
         break;
     }
-    case MessageType::WIN:
-    {
-        constructObjectInfo(bobj);
-        break;
-    }
-    case MessageType::DRAW:
-    {
-        constructObjectInfo(bobj);
-        break;
-    }
-    case MessageType::LOOSE:
-    {
-        constructObjectInfo(bobj);
-        break;
-    }
+
     case MessageType::NEWPLAYER:
     {
         std::cout << "NEWPLAYER\n";
         constructObjectInfo(bobj);
         break;
     }
+ 
 
     default:
         std::cout << "Ni LOG ni LOGOUT\n";

@@ -1,17 +1,23 @@
-
+#include "Jugador.h"
+#include "Button.h"
 #include "SDLApp.h"
 #include "ObjectInfo.h"
 #include <map>
 #include "Socket.h"
-#include "Button.h"
 
 class Game
 {
 private:
- 
+    //Jugador controlado por este juego
+    Jugador *mainPlayer = nullptr;
+    Button* piedra= nullptr;
+    Button* papel= nullptr;
+    Button* tijeras= nullptr;
+    bool waitingResult=false;
     //Lista con la informacion de los otros jugadores
     std::map<std::string, ObjectInfo> jugadores;
-
+    //Lista de informacion de los objetos
+    
     //Referencia a la App de SDL para gestionar el pintado, la ventana etc
     SDLApp *app = nullptr;
     //Textura de fondo
@@ -19,10 +25,6 @@ private:
     //SOcket para comunicarnos con el servidor
     Socket socket;
 
-    Button* bPapel=nullptr;
-    Button* bTijeras=nullptr;
-    Button* bPiedra=nullptr;
-    bool waitingResult=false;
     //booleano para determinar si hemos perdido o no
     bool isRunning = true;
 
